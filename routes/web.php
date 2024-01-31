@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\BrandSearchController;
+use App\Http\Controllers\MeasurementUnitSearchController;
+use App\Http\Controllers\ProductCategorySearchController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -36,6 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('users', UserController::class);
+    Route::resource('products', ProductController::class)->except(['create', 'edit']);
+    Route::get('brands_search', BrandSearchController::class)->name('brands.search');
+    Route::get('measurement_units_search', MeasurementUnitSearchController::class)->name('measurement_units.search');
+    Route::get('product_categories_search', ProductCategorySearchController::class)->name('product_categories.search');
 });
 
 require __DIR__.'/auth.php';

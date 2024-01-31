@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Brand;
+use App\Models\MeasurementUnit;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\User;
 
 return [
@@ -139,6 +143,20 @@ return [
             User::class => [
                 'filterableAttributes' => ['name', 'email', 'access_level'],
                 'sortableAttributes' => ['name', 'email', 'access_level', 'created_at'],
+            ],
+            Product::class => [
+                'filterableAttributes' => ['brand', 'name', 'description', 'price', 'stock'],
+                'sortableAttributes' => ['brand', 'name', 'price', 'stock', 'measurement_unit', 'product_category'],
+                'rankingRules' => ['sort', 'exactness', 'attribute', 'words', 'typo', 'proximity'],
+            ],
+            Brand::class => [
+                'filterableAttributes' => [],
+            ],
+            MeasurementUnit::class => [
+                'filterableAttributes' => [],
+            ],
+            ProductCategory::class => [
+                'filterableAttributes' => [],
             ],
         ],
     ],

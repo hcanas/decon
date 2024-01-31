@@ -4,7 +4,7 @@ import Dropdown from '@/Components/Nav/Dropdown.vue';
 import DropdownLink from '@/Components/Nav/DropdownLink.vue';
 import NavLink from '@/Components/Nav/NavLink.vue';
 import { Link } from '@inertiajs/vue3';
-import { 
+import {
     PresentationChartLineIcon,
     UserGroupIcon,
     UserCircleIcon,
@@ -38,6 +38,9 @@ import {
                                 <NavLink :href="route('users.index')" :active="route().current('users.index')">
                                     Users
                                 </NavLink>
+                                <NavLink :href="route('products.index')" :active="route().current('products.index')">
+                                    Products
+                                </NavLink>
                             </div>
 
                             <Dropdown>
@@ -51,6 +54,12 @@ import {
                                     <div class="flex items-center space-x-2">
                                         <UserGroupIcon class="w-4 h-4" />
                                         <span>Users</span>
+                                    </div>
+                                </DropdownLink>
+                                <DropdownLink :href="route('products.index')" :active="route().current('products.index')" :class="'sm:hidden'">
+                                    <div class="flex items-center space-x-2">
+                                        <UserGroupIcon class="w-4 h-4" />
+                                        <span>Products</span>
                                     </div>
                                 </DropdownLink>
                                 <DropdownLink :href="route('profile.edit')" :active="route().current('profile.edit')">
