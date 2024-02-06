@@ -1,13 +1,16 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { TrashIcon, PencilSquareIcon } from "@heroicons/vue/24/solid/index.js";
 import Modal from "@/Components/Modal.vue";
 import PrimaryButton from "@/Components/Button/PrimaryButton.vue";
 import ProductForm from "./Partials/Form.vue";
 import Datatable from "@/Components/Datatable.vue";
-import { Head, router } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 import { ref } from "vue";
+import Head from "@/Components/Head.vue";
 import DeleteProduct from "@/Pages/Products/Partials/DeleteProduct.vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faPencil, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import IconButton from "@/Components/Button/IconButton.vue";
 
 defineProps({
     filters: Object,
@@ -18,9 +21,10 @@ defineProps({
 });
 
 const columns = [
-    { field: 'name', title: 'Name', sortable: true },
+    { field: 'name', title: 'Name', sortable: true, class: 'w-96' },
+    { field: 'description', title: 'Description' },
     { field: 'brand', title: 'Brand', sortable: true, class: 'w-48' },
-    { field: 'product_category', title: 'Category', sortable: true, class: 'w-72' },
+    { field: 'product_category', title: 'Category', sortable: true, class: 'w-64' },
     { field: 'price', title: 'Price', sortable: true, class: 'w-28' },
     { field: 'stock', title: 'Stock', sortable: true, class: 'w-28' },
 ];
@@ -54,56 +58,41 @@ const updateProducts = () => {
 </script>
 
 <template>
-    <Head title="Users" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">Products</h2>
-        </template>
+        <Head title="Products">
+            <template #actions>
+                <PrimaryButton @click="showModal('product-form')">New Product</PrimaryButton>
+            </template>
+        </Head>
 
-        <div class="py-6">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="px-3 md:px-12">
                 <Datatable
-                    :data="products.data"
-                    :totalRows="products.total"
+                    :data="products"
                     :filters="filters"
                     :columns="columns"
-                    :links="products.links"
-                    :baseUrl="'/products'"
                 >
-                    <template #controls>
-                        <PrimaryButton @click="showModal('product-form')">New Product</PrimaryButton>
-                    </template>
-
-                    <template #nameData="{ data }">
-                        <div class="flex items-center justify-between">
-                            <p class="flex flex-col">
-                                <span>{{ data.name }}</span>
-                                <span class="text-sm text-gray-500">{{ data.description }}</span>
-                            </p>
-                            <div class="flex items-center space-x-2">
-                                <button @click="showModal('product-form', data)" title="Edit Product" class="p-1 text-gray-600 hover:text-sky-600 hover:bg-gray-200 rounded shadow transition ease-in-out">
-                                    <PencilSquareIcon class="w-4 h-4" />
-                                </button>
-                                <button @click="showModal('delete-dialog', data)" title="Block" class="p-1 text-gray-600 hover:text-white hover:bg-red-500 rounded shadow transition ease-in-out">
-                                    <TrashIcon class="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
-                    </template>
-
                     <template #priceData="{ data }">
-                        <span class="block text-right">{{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'PHP' }).format(data.price) }}</span>
+                        <span class="block md:text-right dark:text-gray-300">{{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'PHP' }).format(data.price) }}</span>
                     </template>
 
                     <template #stockData="{ data }">
-                        <p class="flex flex-col items-end">
-                            <span>{{ new Intl.NumberFormat('en-US').format(data.stock) }}</span>
-                            <span class="text-sm text-gray-500">{{ data.measurement_unit }}</span>
+                        <p class="flex items-end space-x-1 md:flex-col md:items-end">
+                            <span class="dark:text-gray-300">{{ new Intl.NumberFormat('en-US').format(data.stock) }}</span>
+                            <span class="text-sm text-gray-400">{{ data.measurement_unit }}</span>
                         </p>
                     </template>
+                    <template #actions="{ data }">
+                        <div class="flex items-center space-x-2">
+                            <IconButton @click="showModal('product-form', data)" class="hover:text-sky-500 focus:text-sky-500 active:text-sky-500 dark:hover:text-sky-500 dark:focus:text-sky-500 dark:active:text-sky-500">
+                                <FontAwesomeIcon :icon="faPencil" />
+                            </IconButton>
+                            <IconButton @click="showModal('delete-dialog', data)" class="hover:text-red-500 focus:text-red-500 active:text-red-500 dark:hover:text-red-500 dark:focus:text-red-500 dark:active:text-red-500">
+                                <FontAwesomeIcon :icon="faTrashCan" />
+                            </IconButton>
+                        </div>
+                    </template>
                 </Datatable>
-            </div>
         </div>
 
         <Modal :show="modalOptions.show">

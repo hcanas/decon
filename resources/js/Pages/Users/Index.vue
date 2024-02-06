@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import Datatable from '@/Components/Datatable.vue';
 import PrimaryButton from '@/Components/Button/PrimaryButton.vue';
 import UserForm from '@/Pages/Users/Partials/Form.vue';
@@ -9,7 +9,10 @@ import UpdateStatus from '@/Pages/Users/Partials/UpdateStatus.vue';
 import UpdateAccessLevel from '@/Pages/Users/Partials/UpdateAccessLevel.vue';
 import Modal from '@/Components/Modal.vue';
 import Tag from '@/Components/Tag.vue';
-import { PencilSquareIcon, LockClosedIcon, LockOpenIcon } from '@heroicons/vue/24/solid';
+import Head from '@/Components/Head.vue';
+import IconButton from "@/Components/Button/IconButton.vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faPencil, faShieldHalved } from "@fortawesome/free-solid-svg-icons";
 
 defineProps({
     filters: Object,
@@ -20,8 +23,10 @@ defineProps({
 });
 
 const columns = [
-    { field: 'email', title: 'Email', sortable: true, class: 'w-2/3 text-left' },
-    { field: 'name', title: 'Name', sortable: true, class: 'text-left' },
+    { field: 'name', title: 'Name', sortable: true },
+    { field: 'email', title: 'Email', sortable: true, class: 'w-96' },
+    { field: 'access_level', title: 'Access Level', sortable: true, class: 'w-40' },
+    { field: 'status', title: 'Status', class: 'w-32' },
 ];
 
 const modalOptions = ref({
@@ -38,7 +43,7 @@ const showModal = (component, data) => {
 
 const closeModal = () => {
     modalOptions.value.show = false;
-    
+
     const handler = setTimeout(() => {
         modalOptions.value.component = '';
         modalOptions.value.data = null;
@@ -53,50 +58,42 @@ const updateUsers = () => {
 </script>
 
 <template>
-    <Head title="Users" />
-
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">Users</h2>
-        </template>
+        <Head :title="'Users'">
+            <template #actions>
+                <PrimaryButton @click="showModal('user-form')">New User</PrimaryButton>
+            </template>
+        </Head>
 
-        <div class="py-6">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <Datatable 
-                    :data="users.data"
-                    :totalRows="users.total"
-                    :filters="filters"
-                    :columns="columns"
-                    :links="users.links"
-                    :baseUrl="'/users'"
-                >
-                    <template #controls>
-                        <PrimaryButton @click="showModal('user-form')">New User</PrimaryButton>
-                    </template>
+        <div class="px-3 md:px-12">
+            <Datatable
+                :data="users"
+                :filters="filters"
+                :columns="columns"
+            >
+                <template #accessLevelData="{ data }">
+                    <Tag class="w-min text-white uppercase" :class="data.access_level === 'admin' ? 'bg-indigo-500' : 'bg-sky-500'">
+                        {{ data.access_level }}
+                    </Tag>
+                </template>
 
-                    <template #emailData="{ data }">
-                        <div class="flex items-center justify-between">
-                            <p class="flex items-start space-x-2">
-                                <span>{{ data.email }}</span>
-                                <Tag :class="{ 'text-white bg-green-500': data.email_verified_at }">{{ data.email_verified_at ? 'verified' : 'unverified' }}</Tag>
-                                <Tag :class="data.access_level === 'admin' ? 'text-white bg-indigo-500' : 'text-white bg-sky-500'">{{ data.access_level }}</Tag>
-                                <Tag :class="data.status === 'blocked' ? 'text-white bg-red-500' : 'text-white bg-green-500'">{{ data.status }}</Tag>
-                            </p>
-                            <div v-if="$page.props.auth.user.id !== data.id" class="flex items-center space-x-2">
-                                <button @click="showModal('update-access-level', data)" title="Edit Access Level" class="p-1 text-gray-600 hover:text-sky-600 hover:bg-gray-200 rounded shadow transition ease-in-out">
-                                    <PencilSquareIcon class="w-4 h-4" />
-                                </button>
-                                <button v-if="data.status !== 'blocked'" @click="showModal('update-status', data)" title="Block" class="p-1 text-gray-600 hover:text-white hover:bg-red-500 rounded shadow transition ease-in-out">
-                                    <LockClosedIcon class="w-4 h-4" />
-                                </button>
-                                <button v-else @click="showModal('update-status', data)" title="Unblock" class="p-1 text-gray-600 hover:text-white hover:bg-green-500 rounded shadow transition ease-in-out">
-                                    <LockOpenIcon class="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
-                    </template>
-                </Datatable>
-            </div>
+                <template #statusData="{ data }">
+                    <Tag class="w-min text-white uppercase" :class="data.status === 'blocked' ? 'bg-red-500' : 'bg-green-500'">
+                        {{ data.status }}
+                    </Tag>
+                </template>
+
+                <template #actions="{ data }">
+                    <div class="flex items-center space-x-2">
+                        <IconButton @click="showModal('update-access-level', data)" class="hover:text-sky-500 focus:text-sky-500 active:text-sky-500 dark:hover:text-sky-500 dark:focus:text-sky-500 dark:active:text-sky-500">
+                            <FontAwesomeIcon :icon="faPencil" />
+                        </IconButton>
+                        <IconButton @click="showModal('update-status', data)" class="hover:text-sky-500 focus:text-sky-500 active:text-sky-500 dark:hover:text-sky-500 dark:focus:text-sky-500 dark:active:text-sky-500">
+                            <FontAwesomeIcon :icon="faShieldHalved" />
+                        </IconButton>
+                    </div>
+                </template>
+            </Datatable>
         </div>
 
         <Modal :show="modalOptions.show">

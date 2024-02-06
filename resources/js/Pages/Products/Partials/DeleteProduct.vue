@@ -38,16 +38,16 @@ onMounted(() => {
 
 <template>
     <div class="flex flex-col space-y-6">
-        <p class="text-gray-600">
+        <p class="text-gray-600 dark:text-gray-300">
             You are about to delete
-            <span class="px-1 py-0.5 bg-gray-100 rounded">{{ data.name }}</span>.
+            <span class="px-1 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">{{ data.name }}</span>.
             Deletion will fail if there are records attached to it. If you wish to hide this product from public view, simply update the stock to 0.
         </p>
 
         <div class="flex items-center justify-between">
             <SecondaryButton @click="$emit('close')">Close</SecondaryButton>
             <DangerButton v-if="canDelete" @click="submit">Delete</DangerButton>
-            <span v-else class="text-sm text-gray-500">You can delete in {{ timer }}.</span>
+            <span v-else class="text-sm text-gray-600 dark:text-gray-300">You can delete in {{ timer }}.</span>
         </div>
     </div>
 </template>

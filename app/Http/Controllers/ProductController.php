@@ -22,17 +22,17 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'page' => 'nullable|numeric',
-            'rowsPerPage' => 'nullable|numeric',
-            'sortField' => ['nullable', Rule::in(['name', 'brand', 'price', 'stock', 'measurement_unit', 'product_category'])],
-            'sortOrder' => ['nullable', 'required_with:sortField', Rule::in(['asc', 'desc'])],
+            'per_page' => 'nullable|numeric',
+            'sort_field' => ['nullable', Rule::in(['name', 'brand', 'price', 'stock', 'measurement_unit', 'product_category'])],
+            'sort_order' => ['nullable', 'required_with:sort_field', Rule::in(['asc', 'desc'])],
             'keyword' => 'nullable|max:255',
         ]);
 
         if ($validator->fails()) abort(404);
 
         $products = Product::search($request->get('keyword'), function ($meilisearch, $query, $options) use ($request) {
-            if (!empty($request->get('sortField'))) {
-                $options['sort'] = [$request->get('sortField').':'.$request->get('sortOrder')];
+            if (!empty($request->get('sort_field'))) {
+                $options['sort'] = [$request->get('sort_field').':'.$request->get('sort_order')];
             }
 
             return $meilisearch->search($query, $options);
@@ -40,8 +40,7 @@ class ProductController extends Controller
 
         return Inertia::render('Products/Index', [
             'filters' => $request->query(),
-            'products' => $products->paginate($request->get('rowsPerPage', 5))
-                ->onEachSide(1)
+            'products' => $products->paginate($request->get('per_page', 10))
                 ->withQueryString()
                 ->through(fn ($product) => [
                     'id' => $product->id,

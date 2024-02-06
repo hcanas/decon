@@ -38,87 +38,52 @@ const submit = () => {
 <template>
     <form @submit.prevent="submit" class="mt-6 space-y-6">
         <div>
-            <InputLabel for="brand" value="Brand" />
-
-            <SuggestionInput v-model="form.brand" :src="route('brands.search')" />
-
-            <InputError class="mt-2" :message="form.errors.brand" />
-        </div>
-
-        <div>
             <InputLabel for="name" value="Name" />
-
-            <TextInput
-                id="name"
-                type="text"
-                class="mt-1 block w-full"
-                v-model="form.name"
-            />
-
+            <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" />
             <InputError class="mt-2" :message="form.errors.name" />
         </div>
 
         <div>
             <InputLabel for="description" value="Description" />
-
-            <TextInput
-                id="description"
-                type="text"
-                class="mt-1 block w-full"
-                v-model="form.description"
-            />
-
+            <TextInput id="description" type="text" class="mt-1 block w-full" v-model="form.description" />
             <InputError class="mt-2" :message="form.errors.description" />
         </div>
 
         <div>
-            <InputLabel for="price" value="Price" />
+            <InputLabel for="brand" value="Brand" />
+            <SuggestionInput v-model="form.brand" :src="route('brands.search')" />
+            <InputError class="mt-2" :message="form.errors.brand" />
+        </div>
 
-            <NumberInput
-                id="price"
-                type="number"
-                class="mt-1 block w-full"
-                v-model="form.price"
-            />
-
-            <InputError class="mt-2" :message="form.errors.price" />
+        <div>
+            <InputLabel for="product_category" value="Product Category" />
+            <SuggestionInput v-model="form.product_category" :src="route('product_categories.search')" />
+            <InputError class="mt-2" :message="form.errors.product_category" />
         </div>
 
         <div>
             <InputLabel for="stock" value="Stock" />
-
-            <NumberInput
-                id="stock"
-                type="number"
-                class="mt-1 block w-full"
-                v-model="form.stock"
-            />
-
+            <NumberInput id="stock" type="number" step="1" class="mt-1 block w-full" v-model="form.stock" />
             <InputError class="mt-2" :message="form.errors.stock" />
         </div>
 
         <div>
             <InputLabel for="measurement_unit" value="Measurement Unit" />
-
             <SuggestionInput v-model="form.measurement_unit" :src="route('measurement_units.search')" />
-
             <InputError class="mt-2" :message="form.errors.measurement_unit" />
         </div>
 
         <div>
-            <InputLabel for="product_category" value="Product Category" />
-
-            <SuggestionInput v-model="form.product_category" :src="route('product_categories.search')" />
-
-            <InputError class="mt-2" :message="form.errors.product_category" />
+            <InputLabel for="price" value="Price" />
+            <NumberInput id="price" type="number" step="0.01" class="mt-1 block w-full" v-model="form.price" />
+            <InputError class="mt-2" :message="form.errors.price" />
         </div>
-
 
         <p v-if="form.wasSuccessful" class="text-green-600">Product has been {{ form.id ? 'updated' : 'created' }}.</p>
 
         <div class="flex items-center justify-between">
             <SecondaryButton type="button" @click="$emit('close')">Close</SecondaryButton>
-            <PrimaryButton type="submit">Register</PrimaryButton>
+            <PrimaryButton type="submit">Save</PrimaryButton>
         </div>
     </form>
 </template>
