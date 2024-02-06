@@ -1,6 +1,6 @@
 <script setup>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-import { ChevronDownIcon } from '@heroicons/vue/24/solid';
+
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import { ChevronDownIcon } from '@heroicons/vue/24/solid';
                 <button>
                     <div class="flex items-center space-x-2">
                         <span class="text-gray-600 text-sm">{{ $page.props.auth.user.name }}</span>
-                        <ChevronDownIcon class="w-4 h-4 dark:text-gray-100" />
+                        <ChevronDownIcon class="w-4 h-4 dark:text-gray-300" />
                     </div>
                 </button>
             </MenuButton>

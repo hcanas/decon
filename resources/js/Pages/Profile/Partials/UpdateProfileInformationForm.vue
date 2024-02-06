@@ -34,7 +34,7 @@ const updateProfileInformation = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Profile Information</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-300">Profile Information</h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Update your account's profile information and email address.
@@ -93,7 +93,7 @@ const updateProfileInformation = () => {
                     A new verification link has been sent to your email address.
                 </div>
             </div>
-            
+
             <div>
                 <InputLabel for="confirm_password" value="Confirm Password" />
 

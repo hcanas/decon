@@ -1,97 +1,90 @@
 <script setup>
+import { ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Nav/Dropdown.vue';
-import DropdownLink from '@/Components/Nav/DropdownLink.vue';
 import NavLink from '@/Components/Nav/NavLink.vue';
 import { Link } from '@inertiajs/vue3';
-import {
-    PresentationChartLineIcon,
-    UserGroupIcon,
-    UserCircleIcon,
-    LockClosedIcon
-} from '@heroicons/vue/24/outline';
+import Modal from '@/Components/Modal.vue';
+import Logout from './Partials/Logout.vue';
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faChartSimple, faUserCog, faUsers, faSuitcaseMedical, faPersonRunning, faXmark, faBars } from "@fortawesome/free-solid-svg-icons";
+import DarkModeToggle from "@/Components/DarkModeToggle.vue";
+
+const showMenu = ref(false);
+
+const showModal = ref(false);
+
+const toggleMenu = () => {
+    showMenu.value = !showMenu.value;
+};
+
+const confirmLogout = () => showModal.value = true;
+const closeModal = () => showModal.value = false;
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-white">
-            <nav>
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex items-center justify-between h-16 sm:h-32">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"
-                                    />
-                                </Link>
-                            </div>
-                        </div>
+    <div class="w-screen h-screen flex flex-col md:flex-row overflow-hidden">
+        <nav class="md:w-96 h-16 md:h-full relative z-50 md:z-0 md:bg-gray-100 dark:md:bg-gray-800 md:transition md:ease-in-out md:duration-500">
+            <div class="absolute md:relative w-screen md:w-full h-full md:h-auto flex items-center justify-between md:justify-center px-3 md:px-6 md:py-12 bg-gray-100 dark:bg-gray-800 z-10 md:z-0 transition ease-in-out md:duration-500">
+                <Link :href="route('dashboard')">
+                    <ApplicationLogo
+                        class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"
+                    />
+                </Link>
 
-                        <div class="flex items-center space-x-6">
-                            <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
-                                </NavLink>
-                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
-                                    Users
-                                </NavLink>
-                                <NavLink :href="route('products.index')" :active="route().current('products.index')">
-                                    Products
-                                </NavLink>
-                            </div>
+                <button @click="toggleMenu" class="md:hidden">
+                    <FontAwesomeIcon :icon="showMenu ? faXmark : faBars" class="dark:text-gray-300" />
+                </button>
+            </div>
 
-                            <Dropdown>
-                                <DropdownLink :href="route('dashboard')" :active="route().current('dashboard')" :class="'sm:hidden'">
-                                    <div class="flex items-center space-x-2">
-                                        <PresentationChartLineIcon class="w-4 h-4" />
-                                        <span>Dashboard</span>
-                                    </div>
-                                </DropdownLink>
-                                <DropdownLink :href="route('users.index')" :active="route().current('users.index')" :class="'sm:hidden'">
-                                    <div class="flex items-center space-x-2">
-                                        <UserGroupIcon class="w-4 h-4" />
-                                        <span>Users</span>
-                                    </div>
-                                </DropdownLink>
-                                <DropdownLink :href="route('products.index')" :active="route().current('products.index')" :class="'sm:hidden'">
-                                    <div class="flex items-center space-x-2">
-                                        <UserGroupIcon class="w-4 h-4" />
-                                        <span>Products</span>
-                                    </div>
-                                </DropdownLink>
-                                <DropdownLink :href="route('profile.edit')" :active="route().current('profile.edit')">
-                                    <div class="flex items-center space-x-2">
-                                        <UserCircleIcon class="w-4 h-4" />
-                                        <span>Profile</span>
-                                    </div>
-                                </DropdownLink>
-                                <!-- Add confirm logout dialog -->
-                                <DropdownLink :href="route('logout')" method="post">
-                                    <div class="flex items-center space-x-2">
-                                        <LockClosedIcon class="w-4 h-4" />
-                                        <span>Logout</span>
-                                    </div>
-                                </DropdownLink>
-                            </Dropdown>
-                        </div>
-                    </div>
+            <div :class="showMenu ? 'translate-y-16 h-screen' : ''" class="w-full flex flex-col space-y-3 md:px-12 py-3 bg-gray-100 dark:bg-gray-800 overflow-hidden transform -translate-y-full md:transform-none transition ease-in-out md:duration-500">
+                <div class="mx-auto">
+                    <DarkModeToggle></DarkModeToggle>
                 </div>
-            </nav>
-
-            <!-- Page Heading -->
-            <header v-if="$slots.header">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
+                <div class="flex flex-col space-y-1">
+                    <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faChartSimple" class="w-6 text-center" />
+                            <span>Dashboard</span>
+                        </div>
+                    </NavLink>
+                    <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faUsers" class="w-6 text-center" />
+                            <span>Users</span>
+                        </div>
+                    </NavLink>
+                    <NavLink :href="route('products.index')" :active="route().current('products.index')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faSuitcaseMedical" class="w-6 text-center" />
+                            <span>Products</span>
+                        </div>
+                    </NavLink>
                 </div>
-            </header>
 
-            <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
-        </div>
+                <div class="flex flex-col space-y-1">
+                    <span class="px-6 text-sm text-primary font-medium">{{ $page.props.auth.user.name }}</span>
+                    <NavLink :href="route('profile.edit')" :active="route().current('profile.edit')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faUserCog" class="w-6 text-center" />
+                            <span>Profile</span>
+                        </div>
+                    </NavLink>
+                    <button type="button" @click.prevent="confirmLogout" class="text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium hover:bg-primary-100 px-6 py-3 rounded transition duration-150 ease-in-out">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faPersonRunning" class="w-6 text-center" />
+                            <span>Logout</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="w-full flex-grow bg-white dark:bg-gray-950 overflow-y-auto md:transition md:ease-in-out md:duration-500">
+            <slot />
+        </main>
     </div>
+
+    <Modal :show="showModal">
+        <Logout @close="closeModal()" />
+    </Modal>
 </template>

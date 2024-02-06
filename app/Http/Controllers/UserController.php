@@ -20,17 +20,17 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'page' => 'nullable|numeric',
-            'rowsPerPage' => 'nullable|numeric',
-            'sortField' => ['nullable', Rule::in(['name', 'email', 'access_level'])],
-            'sortOrder' => ['nullable', 'required_with:sortField', Rule::in(['asc', 'desc'])],
-            'keyword' => 'nullable|max:255',
+            'per_page' => 'nullable|numeric',
+            'sort_field' => ['nullable', Rule::in(['name', 'email', 'access_level'])],
+            'sort_order' => ['nullable', 'required_with:sortField', Rule::in(['asc', 'desc'])],
+            'query' => 'nullable|max:255',
         ]);
 
         if ($validator->fails()) abort(404);
 
-        $users = User::search($request->get('keyword'), function ($meilisearch, $query, $options) use ($request) {
-            if (!empty($request->get('sortField'))) {
-                $options['sort'] = [$request->get('sortField').':'.$request->get('sortOrder')];
+        $users = User::search($request->get('query'), function ($meilisearch, $query, $options) use ($request) {
+            if (!empty($request->get('sort_field'))) {
+                $options['sort'] = [$request->get('sort_field').':'.$request->get('sort_order')];
             }
 
             return $meilisearch->search($query, $options);
@@ -38,18 +38,16 @@ class UserController extends Controller
 
         return Inertia::render('Users/Index', [
             'filters' => $request->query(),
-            'users' => $users->paginate($request->get('rowsPerPage', 10))
-                            ->onEachSide(1)
-                            ->withQueryString()
-                            ->through(fn ($user) => [
-                                'id' => $user->id,
-                                'name' => $user->name,
-                                'email' => $user->email,
-                                'email_verified_at' => $user->email_verified_at,
-                                'access_level' => $user->access_level,
-                                'status' => $user->status,
-                                'deleted_at' => $user->deleted_at,
-                            ]),
+            'users' => $users->paginate($request->get('per_page', 10))
+                ->withQueryString()
+                ->through(fn ($user) => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'email_verified_at' => $user->email_verified_at,
+                    'access_level' => $user->access_level,
+                    'status' => $user->status,
+                ]),
         ]);
     }
 
