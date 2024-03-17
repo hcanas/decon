@@ -1,10 +1,10 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/Form/InputError.vue';
 import InputLabel from '@/Components/Form/InputLabel.vue';
 import PrimaryButton from '@/Components/Button/PrimaryButton.vue';
 import TextInput from '@/Components/Form/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import AuthenticationLayout from "@/Layouts/AuthenticationLayout.vue";
 
 const props = defineProps({
     email: {
@@ -32,7 +32,7 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <AuthenticationLayout>
         <Head title="Reset Password" />
 
         <form @submit.prevent="submit">
@@ -88,5 +88,5 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
-    </GuestLayout>
+    </AuthenticationLayout>
 </template>

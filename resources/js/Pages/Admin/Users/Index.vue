@@ -4,9 +4,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { router } from '@inertiajs/vue3';
 import Datatable from '@/Components/Datatable.vue';
 import PrimaryButton from '@/Components/Button/PrimaryButton.vue';
-import UserForm from '@/Pages/Users/Partials/Form.vue';
-import UpdateStatus from '@/Pages/Users/Partials/UpdateStatus.vue';
-import UpdateAccessLevel from '@/Pages/Users/Partials/UpdateAccessLevel.vue';
+import UserForm from '@/Pages/Admin/Users/Partials/Form.vue';
+import UpdateStatus from '@/Pages/Admin/Users/Partials/UpdateStatus.vue';
+import UpdateAccessLevel from '@/Pages/Admin/Users/Partials/UpdateAccessLevel.vue';
 import Modal from '@/Components/Modal.vue';
 import Tag from '@/Components/Tag.vue';
 import Head from '@/Components/Head.vue';
@@ -59,17 +59,18 @@ const updateUsers = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="'Users'">
-            <template #actions>
-                <PrimaryButton @click="showModal('user-form')">New User</PrimaryButton>
-            </template>
-        </Head>
+        <div class="px-3 md:px-12 py-6 md:py-12">
+            <Head :title="'Users'">
+                <template #actions>
+                    <PrimaryButton @click="showModal('user-form')">New User</PrimaryButton>
+                </template>
+            </Head>
 
-        <div class="px-3 md:px-12">
             <Datatable
                 :data="users"
                 :filters="filters"
                 :columns="columns"
+                class="mt-6 md:mt-12"
             >
                 <template #accessLevelData="{ data }">
                     <Tag class="w-min text-white uppercase" :class="data.access_level === 'admin' ? 'bg-indigo-500' : 'bg-sky-500'">

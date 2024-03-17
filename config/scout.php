@@ -145,8 +145,8 @@ return [
                 'sortableAttributes' => ['name', 'email', 'access_level', 'created_at'],
             ],
             Product::class => [
-                'filterableAttributes' => ['brand', 'name', 'description', 'price', 'stock'],
-                'sortableAttributes' => ['brand', 'name', 'price', 'stock', 'measurement_unit', 'product_category'],
+                'filterableAttributes' => ['brand', 'name', 'description', 'price', 'stock', 'category', 'sub_category'],
+                'sortableAttributes' => ['price'],
                 'rankingRules' => ['sort', 'exactness', 'attribute', 'words', 'typo', 'proximity'],
             ],
             Brand::class => [

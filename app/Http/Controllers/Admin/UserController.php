@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -36,7 +37,7 @@ class UserController extends Controller
             return $meilisearch->search($query, $options);
         });
 
-        return Inertia::render('Users/Index', [
+        return Inertia::render('Admin/Users/Index', [
             'filters' => $request->query(),
             'users' => $users->paginate($request->get('per_page', 10))
                 ->withQueryString()

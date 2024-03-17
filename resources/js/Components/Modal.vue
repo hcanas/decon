@@ -6,12 +6,13 @@ defineProps({
         type: Boolean,
         default: false,
     },
+    width: String,
 });
 </script>
 
 <template>
     <TransitionRoot appear as="template" :show="show">
-        <Dialog as="div" class="relative z-10">
+        <Dialog as="div" class="relative z-50">
             <TransitionChild
                 as="template"
                 enter="duration-300 ease-out"
@@ -34,7 +35,7 @@ defineProps({
                         leave="duration-200 ease-in"
                         leave-from="opacity-100 scale-100"
                         leave-to="opacity-0 scale-95">
-                        <DialogPanel class="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                        <DialogPanel :class="width === 'full' ? 'max-w-7xl' : 'max-w-lg'" class="w-full transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
                             <DialogTitle as="h3" class="mb-4 font-medium leading-6 text-gray-900 dark:text-gray-300">
                                 <slot name="title" />
                             </DialogTitle>

@@ -51,13 +51,13 @@ const submit = () => {
 
         <div>
             <InputLabel for="brand" value="Brand" />
-            <SuggestionInput v-model="form.brand" :src="route('brands.search')" />
+            <SuggestionInput v-model="form.brand" :src="route('admin.brands.search')" />
             <InputError class="mt-2" :message="form.errors.brand" />
         </div>
 
         <div>
             <InputLabel for="product_category" value="Product Category" />
-            <SuggestionInput v-model="form.product_category" :src="route('product_categories.search')" />
+            <SuggestionInput v-model="form.product_category" :src="route('admin.product_categories.search')" />
             <InputError class="mt-2" :message="form.errors.product_category" />
         </div>
 
@@ -69,7 +69,7 @@ const submit = () => {
 
         <div>
             <InputLabel for="measurement_unit" value="Measurement Unit" />
-            <SuggestionInput v-model="form.measurement_unit" :src="route('measurement_units.search')" />
+            <SuggestionInput v-model="form.measurement_unit" :src="route('admin.measurement_units.search')" />
             <InputError class="mt-2" :message="form.errors.measurement_unit" />
         </div>
 

@@ -5,9 +5,9 @@ import Head from "@/Components/Head.vue";
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="'Dashboard'" />
+        <div class="px-3 md:px-12 py-6 md:py-12">
+            <Head :title="'Dashboard'" />
 
-        <div class="px-3 md:px-12">
             <div class="text-gray-600">You're logged in!</div>
         </div>
     </AuthenticatedLayout>
