@@ -23,6 +23,8 @@ class Product extends Model
 
     public function toSearchableArray() : array
     {
+        $category = $this->category()->first();
+
         return [
             'id' => $this->id,
             'brand' => $this->brand()->first()->value,
@@ -31,9 +33,8 @@ class Product extends Model
             'price' => (float) $this->price,
             'stock' => (int) $this->stock,
             'measurement_unit' => $this->measurementUnit()->first()->value,
-            'product_category' => $this->category()->first()->product_category_id
-                ? $this->category()->first()->parentCategory()->first()->value . ':' . $this->category()->first()->value
-                : $this->category()->first()->value,
+            'category' => $category->product_category_id ? $category->parentCategory()->first()->value : $category->value,
+            'sub_category' => $category->product_category_id ? $category->value : null,
         ];
     }
 
