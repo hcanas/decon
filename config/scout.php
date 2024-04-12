@@ -4,6 +4,8 @@ use App\Models\Brand;
 use App\Models\MeasurementUnit;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\PurchaseOrder;
+use App\Models\Quotation;
 use App\Models\User;
 
 return [
@@ -145,7 +147,7 @@ return [
                 'sortableAttributes' => ['name', 'email', 'access_level', 'created_at'],
             ],
             Product::class => [
-                'filterableAttributes' => ['brand', 'name', 'description', 'price', 'stock', 'category', 'sub_category'],
+                'filterableAttributes' => ['brand', 'name', 'description', 'price', 'status', 'category', 'sub_category'],
                 'sortableAttributes' => ['price'],
                 'rankingRules' => ['sort', 'exactness', 'attribute', 'words', 'typo', 'proximity'],
             ],
@@ -157,6 +159,14 @@ return [
             ],
             ProductCategory::class => [
                 'filterableAttributes' => [],
+            ],
+            Quotation::class => [
+                'filterableAttributes' => ['customer', 'status'],
+                'sortableAttributes' => ['created_at'],
+            ],
+            PurchaseOrder::class => [
+                'filterableAttributes' => ['reference_number', 'payment_details', 'delivery_date', 'status', 'customer'],
+                'sortableAttributes' => ['delivery_date', 'created_at', 'updated_at'],
             ],
         ],
     ],

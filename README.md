@@ -48,8 +48,6 @@
 6. Run migrations
    ```
    $ ./vendor/bin/sail artisan migrate --seed
-   
-   $ ./vendor/bin/sail artisan db:seed --class=ProductSeeder
    ```
 7. Setup laravel scout
    ```
@@ -61,6 +59,9 @@
    $ ./vendor/bin/sail artisan scout:import "App\Models\ProductCategory"
    $ ./vendor/bin/sail artisan scout:import "App\Models\MeasurementUnit"
    $ ./vendor/bin/sail artisan scout:import "App\Models\Product"
+   $ ./vendor/bin/sail artisan scout:import "App\Models\Quotation"
+   $ ./vendor/bin/sail artisan scout:import "App\Models\QuotationItem"
+   $ ./vendor/bin/sail artisan scout:import "App\Models\PurchaseOrder"
    ```
 8. Access your app
    ```

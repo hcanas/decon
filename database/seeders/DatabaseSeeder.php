@@ -22,5 +22,13 @@ class DatabaseSeeder extends Seeder
             'access_level' => 'admin',
             'status' => 'active',
         ]);
+
+        $this->call([
+            CustomerSeeder::class,
+            ProductSeeder::class,
+            QuotationSeeder::class,
+            QuotationItemSeeder::class,
+            PurchaseOrderSeeder::class,
+        ]);
     }
 }

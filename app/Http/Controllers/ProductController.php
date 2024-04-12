@@ -73,7 +73,7 @@ class ProductController extends Controller
                     'name' => $product->name,
                     'description' => $product->description,
                     'price' => $product->price,
-                    'stock' => $product->stock,
+                    'status' => $product->status,
                     'measurement_unit' => $product->measurementUnit->value,
                     'category' => $product->category->product_category_id
                         ? $product->category->parentCategory->value

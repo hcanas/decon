@@ -1,0 +1,37 @@
+<script setup>
+import InputLabel from "@/Components/Form/InputLabel.vue";
+import TextInput from "@/Components/Form/TextInput.vue";
+import PrimaryButton from "@/Components/Button/PrimaryButton.vue";
+import {useForm} from "@inertiajs/vue3";
+import InputError from "@/Components/Form/InputError.vue";
+
+const props = defineProps({
+    data: Object,
+});
+
+const emits = defineEmits(['saved']);
+
+const form = useForm({
+    payment_details: props.data.payment_details ?? '',
+});
+
+const save = () => {
+    form.patch(route('admin.purchase_orders.update', { purchase_order: props.data.id }), {
+        onSuccess: () => emits('saved'),
+    })
+};
+</script>
+
+<template>
+    <form @submit.prevent="save()">
+        <div class="flex flex-col space-y-6">
+            <div class="flex flex-col space-y-1">
+                <InputLabel value="Payment Details" />
+                <TextInput v-model="form.payment_details" />
+                <span class="text-xs italic dark:text-gray-300">(Example: Gcash - 1234567890)</span>
+                <InputError :message="form.errors.payment_details" />
+            </div>
+            <PrimaryButton type="submit" class="ms-auto">Save</PrimaryButton>
+        </div>
+    </form>
+</template>

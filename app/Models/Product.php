@@ -16,7 +16,7 @@ class Product extends Model
         'name',
         'description',
         'price',
-        'stock',
+        'status',
         'measurement_unit_id',
         'product_category_id',
     ];
@@ -31,7 +31,7 @@ class Product extends Model
             'name' => $this->name,
             'description' => $this->description,
             'price' => (float) $this->price,
-            'stock' => (int) $this->stock,
+            'status' => $this->status,
             'measurement_unit' => $this->measurementUnit()->first()->value,
             'category' => $category->product_category_id ? $category->parentCategory()->first()->value : $category->value,
             'sub_category' => $category->product_category_id ? $category->value : null,
@@ -51,5 +51,10 @@ class Product extends Model
     public function category() : BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');
+    }
+
+    public function quotationItems()
+    {
+        return $this->hasMany(QuotationItem::class);
     }
 }
