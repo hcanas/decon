@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import NavLink from "@/Components/Nav/NavLink.vue";
@@ -12,10 +12,13 @@ import {
     faXmark,
     faHome,
     faChartSimple,
-    faArrowRight
+    faArrowRight,
+    faShoppingCart
 } from "@fortawesome/free-solid-svg-icons";
-import { faClipboard } from "@fortawesome/free-regular-svg-icons";
 import HorizontalNavLink from "@/Components/Nav/HorizontalNavLink.vue";
+import {useCart} from "@/Composables/cart.js";
+
+const cart = useCart();
 
 const isLoggedIn = computed(() => Boolean(usePage().props.auth?.user));
 
@@ -24,6 +27,20 @@ const showMenu = ref(false);
 const toggleMenu = () => {
     showMenu.value = !showMenu.value;
 };
+
+const cartItemCount = ref(0);
+
+window.addEventListener('storage', event => {
+    if (event.key === 'cart' && event.newValue) {
+        cartItemCount.value = Array.isArray(JSON.parse(event.newValue))
+            ? JSON.parse(event.newValue).length
+            : 0;
+    }
+});
+
+onMounted(() => {
+    cartItemCount.value = cart.items.length;
+});
 </script>
 
 <template>
@@ -47,12 +64,12 @@ const toggleMenu = () => {
                         Products
                     </HorizontalNavLink>
 
-                    <button class="group" title="Quotation">
+                    <HorizontalNavLink :href="route('cart')" class="group">
                         <div class="relative">
-                            <span class="absolute -top-2 -right-3 text-xs text-white px-1.5 py-0.5 bg-red-500 rounded-full">0</span>
-                            <FontAwesomeIcon :icon="faClipboard" class="relative text-gray-600 dark:text-gray-300 group-hover:text-primary transition ease-in-out" />
+                            <span class="absolute -top-2 -right-3 text-xs text-white px-1.5 py-0.5 bg-red-500 rounded-full">{{ cartItemCount }}</span>
+                            <FontAwesomeIcon :icon="faShoppingCart" class="relative text-gray-600 dark:text-gray-300 group-hover:text-primary transition ease-in-out" />
                         </div>
-                    </button>
+                    </HorizontalNavLink>
                 </div>
 
                 <div class="flex items-center space-x-6">

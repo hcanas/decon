@@ -14,7 +14,7 @@ import {
     faPersonRunning,
     faXmark,
     faBars,
-    faHome
+    faHome, faTruckFast, faFileInvoice
 } from "@fortawesome/free-solid-svg-icons";
 import DarkModeToggle from "@/Components/DarkModeToggle.vue";
 
@@ -74,6 +74,18 @@ const closeModal = () => showModal.value = false;
                             <span>Products</span>
                         </div>
                     </NavLink>
+                    <NavLink :href="route('admin.quotations.index')" :active="route().current('admin.quotations.index')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faFileInvoice" class="w-6 text-center" />
+                            <span>Quotations</span>
+                        </div>
+                    </NavLink>
+                    <NavLink :href="route('admin.purchase_orders.index')" :active="route().current('admin.purchase_orders.index')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faTruckFast" class="w-6 text-center" />
+                            <span>Purchase Orders</span>
+                        </div>
+                    </NavLink>
                 </div>
 
                 <div class="flex flex-col space-y-1">
@@ -94,7 +106,7 @@ const closeModal = () => showModal.value = false;
             </div>
         </nav>
 
-        <main class="w-full flex-grow bg-white dark:bg-gray-950 overflow-y-auto md:transition md:ease-in-out">
+        <main class="w-full flex-grow md:p-12 bg-white dark:bg-gray-950 overflow-y-auto md:transition md:ease-in-out">
             <slot />
         </main>
     </div>

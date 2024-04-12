@@ -1,5 +1,7 @@
 <script setup>
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
 
 defineProps({
     show: {
@@ -8,6 +10,8 @@ defineProps({
     },
     width: String,
 });
+
+defineEmits(['close']);
 </script>
 
 <template>
@@ -36,8 +40,13 @@ defineProps({
                         leave-from="opacity-100 scale-100"
                         leave-to="opacity-0 scale-95">
                         <DialogPanel :class="width === 'full' ? 'max-w-7xl' : 'max-w-lg'" class="w-full transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
-                            <DialogTitle as="h3" class="mb-4 font-medium leading-6 text-gray-900 dark:text-gray-300">
-                                <slot name="title" />
+                            <DialogTitle>
+                                <div class="flex items-start justify-between space-x-6">
+                                    <h3 class="mb-4 font-medium leading-6 text-gray-900 dark:text-gray-300">
+                                        <slot name="title" />
+                                    </h3>
+                                    <button @click="$emit('close')" class="dark:text-gray-300"><FontAwesomeIcon :icon="faXmark" /></button>
+                                </div>
                             </DialogTitle>
                             <slot />
                         </DialogPanel>

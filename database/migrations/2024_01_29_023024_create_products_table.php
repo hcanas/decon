@@ -17,16 +17,15 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Brand::class);
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('description');
             $table->unsignedDecimal('price');
-            $table->unsignedInteger('stock');
+            $table->string('status');
             $table->foreignIdFor(MeasurementUnit::class);
             $table->foreignIdFor(ProductCategory::class);
             $table->timestamps();
 
-            $table->fullText('name');
-            $table->fullText('description');
+            $table->unique(['name', 'brand_id']);
         });
     }
 

@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class SaveProductRequest extends FormRequest
+class UpdatePurchaseOrder extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +23,12 @@ class SaveProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'brand' => 'required|max:255',
-            'name' => ['required', 'max:255', Rule::unique('products')->ignore($this->route('product'))],
-            'description' => 'required|max:255',
-            'price' => 'required|numeric|min:0',
-            'status' => 'required|numeric|min:0',
-            'measurement_unit' => 'required|max:255',
-            'product_category' => 'required|max:255',
+            'payment_details' => 'nullable|max:255',
+            'delivery_date' => 'nullable|date',
+            'status' => [
+                'sometimes',
+                Rule::in(['delivered', 'cancelled']),
+            ],
         ];
     }
 }

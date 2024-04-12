@@ -24,7 +24,7 @@ class ProductFactory extends Factory
             'name' => fake()->unique()->words(rand(1, 3), true),
             'description' => fake()->words(rand(1, 10), true),
             'price' => fake()->randomFloat(2, 1, 1000),
-            'stock' => rand(1, 1000),
+            'status' => ['available', 'unavailable'][rand(0, 1)],
             'measurement_unit_id' => MeasurementUnit::query()->inRandomOrder()->first(),
             'product_category_id' => ProductCategory::query()->inRandomOrder()->first(),
         ];

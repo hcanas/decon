@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 const model = defineModel({
     type: [Number, String],
@@ -7,20 +7,24 @@ const model = defineModel({
 });
 
 const input = ref(null);
-
-onMounted(() => {
-    if (input.value.hasAttribute('autofocus')) {
-        input.value.focus();
-    }
-});
-
-defineExpose({ focus: () => input.value.focus() });
 </script>
 
 <template>
     <input
         class="border-gray-300 focus:border-primary-200 focus:ring-0 rounded-md shadow-sm"
         v-model="model"
+        type="number"
         ref="input"
     />
 </template>
+
+<style scoped>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+</style>
