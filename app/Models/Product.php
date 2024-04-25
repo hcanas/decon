@@ -12,6 +12,7 @@ class Product extends Model
     use HasFactory, Searchable;
 
     protected $fillable = [
+        'image',
         'brand_id',
         'name',
         'description',
@@ -27,7 +28,7 @@ class Product extends Model
 
         return [
             'id' => $this->id,
-            'brand' => $this->brand()->first()->value,
+            'brand' => $this->brand()->first()?->value,
             'name' => $this->name,
             'description' => $this->description,
             'price' => (float) $this->price,

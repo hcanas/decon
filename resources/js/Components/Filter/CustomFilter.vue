@@ -23,7 +23,7 @@ watch(
 
 <template>
     <div class="flex items-center space-x-3">
-        <TextInput type="search" v-model="keyword" class="w-96" placeholder="Search here..." autofocus />
+        <TextInput type="search" v-model="keyword" class="text-sm w-96" placeholder="Search here..." autofocus />
         <slot />
     </div>
 </template>

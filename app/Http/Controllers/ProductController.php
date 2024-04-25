@@ -35,6 +35,8 @@ class ProductController extends Controller
                 $options['sort'] = ['price:desc'];
             }
 
+            $filters[] = 'status != archived';
+
             if ($request->get('brands')) {
                 $filters[] = 'brand IN ['.$request->brands.']';
             }
@@ -48,11 +50,11 @@ class ProductController extends Controller
             }
 
             if ($request->get('category')) {
-                $filters[] = 'category = '.$request->get('category');
+                $filters[] = 'category = "'.$request->get('category').'"';
             }
 
             if ($request->get('sub_category')) {
-                $filters[] = 'sub_category = '.$request->get('sub_category');
+                $filters[] = 'sub_category = "'.$request->get('sub_category').'"';
             }
 
             // merge filters
@@ -69,7 +71,8 @@ class ProductController extends Controller
                 ->withQueryString()
                 ->through(fn ($product) => [
                     'id' => $product->id,
-                    'brand' => $product->brand->value,
+                    'image' => $product->image,
+                    'brand' => $product->brand?->value,
                     'name' => $product->name,
                     'description' => $product->description,
                     'price' => $product->price,

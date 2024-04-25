@@ -144,10 +144,10 @@ return [
         'index-settings' => [
             User::class => [
                 'filterableAttributes' => ['name', 'email', 'access_level'],
-                'sortableAttributes' => ['name', 'email', 'access_level', 'created_at'],
+                'sortableAttributes' => ['updated_at'],
             ],
             Product::class => [
-                'filterableAttributes' => ['brand', 'name', 'description', 'price', 'status', 'category', 'sub_category'],
+                'filterableAttributes' => ['name', 'description', 'brand', 'price', 'status', 'category', 'sub_category'],
                 'sortableAttributes' => ['price'],
                 'rankingRules' => ['sort', 'exactness', 'attribute', 'words', 'typo', 'proximity'],
             ],

@@ -27,12 +27,12 @@ onMounted(() => {
 <template>
     <div class="flex items-stretch">
         <div class="flex-shrink-0">
-            <img src="/storage/images/placeholder.png" class="w-48" />
+            <img :src="`/storage/images/${product.image ?? 'placeholder.png'}`" class="w-48" />
         </div>
         <div class="flex-grow flex flex-col justify-between">
             <div class="flex flex-col space-y-1">
                 <p class="text-xl font-medium">{{ product.name }}</p>
-                <p class="text-sm text-gray-600">Brand: {{ product.brand }}</p>
+                <p class="text-sm text-gray-600">Brand: {{ product.brand ?? 'No Brand' }}</p>
                 <p class="text-gray-600 text-wrap">{{ product.description }}</p>
                 <p>{{ formatCurrency(product.price) }} / {{ product.measurement_unit }}</p>
             </div>

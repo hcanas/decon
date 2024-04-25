@@ -20,24 +20,24 @@ class UserController extends Controller
     public function index(Request $request) : Response
     {
         $validator = Validator::make($request->all(), [
-            'page' => 'nullable|numeric',
             'per_page' => 'nullable|numeric',
-            'sort_field' => ['nullable', Rule::in(['name', 'email', 'access_level'])],
-            'sort_order' => ['nullable', 'required_with:sortField', Rule::in(['asc', 'desc'])],
-            'query' => 'nullable|max:255',
+            'keyword' => 'nullable|max:255',
+            'only' => ['nullable', Rule::in(['admin', 'regular'])],
         ]);
 
         if ($validator->fails()) abort(404);
 
-        $users = User::search($request->get('query'), function ($meilisearch, $query, $options) use ($request) {
-            if (!empty($request->get('sort_field'))) {
-                $options['sort'] = [$request->get('sort_field').':'.$request->get('sort_order')];
+        $users = User::search($request->get('keyword'), function ($meilisearch, $query, $options) use ($validator) {
+            if (!empty($validator->validated()['only'])) {
+                $options['filter'] = 'access_level = '.$validator->validated()['only'];
             }
+
+            $options['sort'] = ['updated_at:desc'];
 
             return $meilisearch->search($query, $options);
         });
 
-        return Inertia::render('Admin/Users/Index', [
+        return Inertia::render('Users/Index', [
             'filters' => $request->query(),
             'users' => $users->paginate($request->get('per_page', 10))
                 ->withQueryString()

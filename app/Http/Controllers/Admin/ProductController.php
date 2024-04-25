@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SaveProductRequest;
+use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Brand;
 use App\Models\MeasurementUnit;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -23,42 +26,33 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'per_page' => 'nullable|numeric',
-            'sort' => ['nullable', Rule::in(['relevance', 'lowest_price', 'highest_price'])],
             'keyword' => 'nullable|max:255',
             'brands' => 'nullable',
-            'price_min' => 'nullable|numeric',
-            'price_max' => 'nullable|numeric',
             'category' => 'nullable|required_with:sub_category',
             'sub_category' => 'nullable',
+            'status' => [
+                'nullable',
+                Rule::in(['available', 'unavailable', 'archived']),
+            ],
         ]);
 
         if ($validator->fails()) abort(404);
 
-        $products = Product::search($request->get('keyword'), function ($meilisearch, $query, $options) use ($request) {
-            if ($request->get('sort') AND $request->get('sort') === 'lowest_price') {
-                $options['sort'] = ['price:asc'];
-            } elseif ($request->get('sort') AND $request->get('sort') === 'highest_price') {
-                $options['sort'] = ['price:desc'];
+        $products = Product::search($request->get('keyword'), function ($meilisearch, $query, $options) use ($validator) {
+            if (!empty($validator->validated()['brands'])) {
+                $filters[] = 'brand IN ['.$validator->validated()['brands'].']';
             }
 
-            if ($request->get('brands')) {
-                $filters[] = 'brand IN ['.$request->brands.']';
+            if (!empty($validator->validated()['category'])) {
+                $filters[] = 'category = "'.$validator->validated()['category'].'"';
             }
 
-            if ($request->get('price_min')) {
-                $filters[] = 'price >= '.$request->get('price_min');
+            if (!empty($validator->validated()['sub_category'])) {
+                $filters[] = 'sub_category = "'.$validator->validated()['sub_category'].'"';
             }
 
-            if ($request->get('price_max')) {
-                $filters[] = 'price <= '.$request->get('price_max');
-            }
-
-            if ($request->get('category')) {
-                $filters[] = 'category = '.$request->get('category');
-            }
-
-            if ($request->get('sub_category')) {
-                $filters[] = 'sub_category = '.$request->get('sub_category');
+            if (!empty($validator->validated()['status'])) {
+                $filters[] = 'status = '.$validator->validated()['status'];
             }
 
             // merge filters
@@ -69,21 +63,25 @@ class ProductController extends Controller
             return $meilisearch->search($query, $options);
         });
 
-        return Inertia::render('Admin/Products/Index', [
+        return Inertia::render('Products/AdminIndex', [
             'filters' => $request->query(),
             'products' => $products->paginate($request->get('per_page', 10))
                 ->withQueryString()
                 ->through(fn ($product) => [
                     'id' => $product->id,
-                    'brand' => $product->brand->value,
+                    'image' => $product->image,
+                    'brand' => $product->brand?->value,
                     'name' => $product->name,
                     'description' => $product->description,
                     'price' => $product->price,
-                    'stock' => $product->stock,
                     'measurement_unit' => $product->measurementUnit->value,
-                    'product_category' => $product->category->product_category_id
-                        ? $product->category->parentCategory->value . ':' . $product->category->value
+                    'category' => $product->category->product_category_id
+                        ? $product->category->parentCategory->value
                         : $product->category->value,
+                    'sub_category' => $product->category->product_category_id
+                        ? $product->category->value
+                        : null,
+                    'status' => $product->status,
                 ]),
         ]);
     }
@@ -91,12 +89,14 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SaveProductRequest $request)
+    public function store(CreateProductRequest $request)
     {
         DB::beginTransaction();
 
         // get brand
-        $brand = Brand::firstOrCreate(['value' => $request->validated()['brand']]);
+        if ($request->validated()['brand']) {
+            $brand = Brand::firstOrCreate(['value' => $request->validated()['brand']]);
+        }
 
         // get measurement unit
         $measurementUnit = MeasurementUnit::firstOrCreate(['value' => $request->validated()['measurement_unit']]);
@@ -111,15 +111,27 @@ class ProductController extends Controller
                 : null,
         ]);
 
+        if ($request->validated()['image']) {
+            $file = $request->file('image');
+            $filename = bin2hex(random_bytes(8)).'.webp';
+        }
+
         Product::create([
-            'brand_id' => $brand->id,
+            'image' => isset($filename) ? $filename : null,
+            'brand_id' => isset($brand) ? $brand->id : null,
             'name' => $request->validated()['name'],
             'description' => $request->validated()['description'],
             'price' => $request->validated()['price'],
-            'stock' => $request->validated()['stock'],
+            'status' => 'available',
             'measurement_unit_id' => $measurementUnit->id,
             'product_category_id' => $productCategory->id,
         ]);
+
+        if (isset($file)) {
+            $image = Image::read($file);
+            $image->resize(300, 300);
+            Storage::put('public/images/'.$filename, (string) $image->encode());
+        }
 
         DB::commit();
 
@@ -137,36 +149,64 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
         DB::beginTransaction();
 
         // get brand
-        // get brand
-        $brand = Brand::firstOrCreate(['value' => $request->validated()['brand']]);
+        if ($request->validated('brand')) {
+            $brand = Brand::firstOrCreate(['value' => $request->validated('brand')]);
+            $product->fill(['brand_id' => $brand->id]);
+        }
 
         // get measurement unit
-        $measurementUnit = MeasurementUnit::firstOrCreate(['value' => $request->validated()['measurement_unit']]);
+        if ($request->validated('measurement_unit')) {
+            $measurementUnit = MeasurementUnit::firstOrCreate(['value' => $request->validated('measurement_unit')]);
+            $product->fill(['measurement_unit_id' => $measurementUnit->id]);
+        }
 
         // get product category
         // if input meets main:sub category format, data will be in $arr[0] and $arr[1] respectively
-        $arr = explode(':', $request->validated()['product_category']);
-        $productCategory = ProductCategory::firstOrCreate([
-            'value' => $arr[1] ?? $arr[0],
-            'product_category_id' => isset($arr[1])
-                ? ProductCategory::firstOrCreate(['value' => $arr[0]])->id
-                : null,
-        ]);
+        if ($request->validated('product_category')) {
+            $arr = explode(':', $request->validated('product_category'));
+            $productCategory = ProductCategory::firstOrCreate([
+                'value' => $arr[1] ?? $arr[0],
+                'product_category_id' => isset($arr[1])
+                    ? ProductCategory::firstOrCreate(['value' => $arr[0]])->id
+                    : null,
+            ]);
+            $product->fill(['product_category_id' => $productCategory->id]);
+        }
 
-        $product->fill([
-            'brand_id' => $brand->id,
-            'name' => $request->validated()['name'],
-            'description' => $request->validated()['description'],
-            'price' => $request->validated()['price'],
-            'stock' => $request->validated()['stock'],
-            'measurement_unit_id' => $measurementUnit->id,
-            'product_category_id' => $productCategory->id,
-        ])->save();
+        if ($request->validated('name')) {
+            $product->fill(['name' => $request->validated('name')]);
+        }
+
+        if ($request->validated('description')) {
+            $product->fill(['description' => $request->validated('description')]);
+        }
+
+        if ($request->validated('price')) {
+            $product->fill(['price' => $request->validated('price')]);
+        }
+
+        if ($request->validated('status')) {
+            $product->fill(['status' => $request->validated('status')]);
+        }
+
+        if ($request->validated('image')) {
+            $file = $request->file('image');
+            $filename = $product->image ?? bin2hex(random_bytes(8)).'.webp';
+            $product->fill(['image' => $filename]);
+        }
+
+        $product->save();
+
+        if (isset($file)) {
+            $image = Image::read($file);
+            $image->resize(300, 300);
+            Storage::put('public/images/'.$filename, (string) $image->encode());
+        }
 
         DB::commit();
 

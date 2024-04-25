@@ -9,10 +9,8 @@ const model = defineModel({
 });
 
 const props = defineProps({
-    src: {
-        type: String,
-        required: true,
-    },
+    src: String,
+    disabled: Boolean,
 });
 
 const keyword = ref('');
@@ -40,17 +38,22 @@ watch(
         <Combobox v-model="model">
             <ComboboxInput
                 class="w-full border-gray-300 focus:border-primary-200 focus:ring-0 rounded-md shadow-sm z-0"
+                :class="{ 'bg-gray-100 cursor-not-allowed': disabled }"
                 @change="keyword = $event.target.value"
+                :disabled="disabled"
                 autofocus
             />
             <ComboboxOptions class="absolute mt-1 py-1 max-h-60 w-full border rounded-lg bg-white shadow-lg z-10">
                 <ComboboxOption
                     v-for="(item, key) in selection"
+                    as="template"
                     :key="key"
                     :value="item"
-                    class="px-3 py-1 cursor-pointer hover:text-primary hover:bg-primary-200"
+                    v-slot="{ active }"
                 >
-                    {{ item }}
+                    <li class="relative text-sm px-3 py-1 cursor-pointer hover:text-white hover:bg-primary" :class="{ 'bg-primary text-white': active }">
+                        {{ item }}
+                    </li>
                 </ComboboxOption>
             </ComboboxOptions>
         </Combobox>

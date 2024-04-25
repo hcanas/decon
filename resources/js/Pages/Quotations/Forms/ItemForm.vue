@@ -63,7 +63,7 @@ onMounted(() => {
                 <td class="group flex flex-col p-2">
                     <p class="relative flex flex-col">
                         <span :class="item.status">
-                            {{ item.product.name }} ({{ item.product.brand.value }})
+                            {{ item.product.name }} ({{ item.product.brand?.value ?? 'No Brand' }})
                         </span>
                         <span class="w-full text-gray-600 text-sm italic truncate" :class="item.status">
                             {{ item.product.description }}
