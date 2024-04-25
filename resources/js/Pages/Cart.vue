@@ -104,15 +104,18 @@ onMounted(() => {
             <div v-if="items.length" class="flex flex-col space-y-6 mt-6">
                 <CustomTable :columns="columns" :rows="items">
                     <template #product="{ rowData }">
-                        <div class="flex flex-col">
-                            <p>{{ rowData.brand }} ({{ rowData.name }})</p>
-                            <p class="text-sm text-gray-500 block truncate">{{ rowData.description }}</p>
-                            <TableButton @click="removeItem(rowData.id)" class="text-red-500">
-                                <div class="flex items-center space-x-1">
-                                    <FontAwesomeIcon :icon="faTrashCan" />
-                                    <span>Remove</span>
-                                </div>
-                            </TableButton>
+                        <div class="flex items-center space-x-3">
+                            <img src="/storage/images/placeholder.png" class="w-24 rounded" />
+                            <div class="flex flex-col">
+                                <p>{{ rowData.brand }} ({{ rowData.name }})</p>
+                                <p class="text-sm text-gray-500 block truncate">{{ rowData.description }}</p>
+                                <TableButton @click="removeItem(rowData.id)" class="text-red-500">
+                                    <div class="flex items-center space-x-1">
+                                        <FontAwesomeIcon :icon="faTrashCan" />
+                                        <span>Remove</span>
+                                    </div>
+                                </TableButton>
+                            </div>
                         </div>
                     </template>
 

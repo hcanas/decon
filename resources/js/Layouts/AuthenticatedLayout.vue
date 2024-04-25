@@ -56,7 +56,7 @@ const closeModal = () => showModal.value = false;
                             <span>Home</span>
                         </div>
                     </NavLink>
-                    <NavLink :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
+                    <NavLink :href="route('admin.dashboard', { year: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', year: 'numeric' }) })" :active="route().current('admin.dashboard')">
                         <div class="flex items-center space-x-2">
                             <FontAwesomeIcon :icon="faChartSimple" class="w-6 text-center" />
                             <span>Dashboard</span>

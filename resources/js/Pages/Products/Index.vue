@@ -1,13 +1,13 @@
 <script setup>
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Head from "@/Components/Head.vue";
-import Filter from "@/Components/Filter/Filter.vue";
 import Pagination from "@/Components/Pagination.vue";
 import Modal from "@/Components/Modal.vue";
 import {ref} from "vue";
 import ProductDetails from "@/Pages/Products/Partials/ProductDetails.vue";
 import {useFormatter} from "@/Composables/formatter.js";
 import {useCart} from "@/Composables/cart.js";
+import Filter from "@/Pages/Products/Filter.vue";
 
 const props = defineProps({
     products: {
@@ -45,7 +45,7 @@ const closeModal = () => {
             <div class="grid grid-cols-2 md:grid-cols-6 gap-6">
                 <a href="#" @click.prevent="showDetails(product)" v-for="product in products.data" class="shadow-lg rounded dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900 transition ease-in-out">
                     <div class="w-full p-1 rounded-t">
-                        <img src="/storage/images/placeholder.png" class="mx-auto rounded-t" />
+                        <img :src="`/storage/images/${product.image ?? 'placeholder.png'}`" class="mx-auto rounded-t" />
                     </div>
                     <div class="flex flex-col items-center px-4 py-2">
                         <p class="w-full text-center dark:text-gray-300 truncate" :title="product.name">{{ product.name }}</p>

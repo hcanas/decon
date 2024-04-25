@@ -19,13 +19,13 @@ const unavailable = computed(() => filter(props.data?.quotation.items, x => x.st
             <div class="flex flex-col divide-y">
                 <div v-for="item in data.quotation.items" class="flex items-end py-2">
                     <div class="flex-grow flex flex-col">
-                        <p :class="item.status">{{ item.product.name }} ({{ item.product.brand.value }})</p>
+                        <p :class="item.status">{{ item.product.name }} ({{ item.product.brand?.value ?? 'No Brand' }})</p>
                         <p :class="item.status" class="w-96 truncate text-sm text-gray-600 italic">{{ item.product.description }}</p>
                         <p :class="item.status" class="text-sm">{{ `${item.qty} ${item.measurement_unit} x ${formatCurrency(item.price)}` }}</p>
                     </div>
                     <p :class="item.status" class="flex-shrink-0 text-sm">{{ formatCurrency(item.qty * item.price) }}</p>
                 </div>
-                <p class="flex justify-between font-bold">
+                <p class="flex justify-between font-bold py-2">
                     <span>Amount</span>
                     <span>{{ formatCurrency(data.amount) }}</span>
                 </p>

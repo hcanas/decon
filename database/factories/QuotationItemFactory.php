@@ -18,8 +18,8 @@ class QuotationItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'quotation_id' => rand(1, 100),
-            'product_id' => rand(1, 200),
+            'quotation_id' => rand(1, 1000),
+            'product_id' => rand(1, 7164),
             'price' => fake()->randomFloat(2, 1, 100),
             'qty' => rand(1, 100),
             'measurement_unit' => MeasurementUnit::query()->inRandomOrder()->first()->value,

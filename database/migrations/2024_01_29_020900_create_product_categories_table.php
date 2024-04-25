@@ -14,11 +14,12 @@ return new class extends Migration
     {
         Schema::create('product_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('value')->unique();
+            $table->string('value');
             $table->foreignIdFor(ProductCategory::class)->nullable();
             $table->timestamps();
 
             $table->fullText('value');
+            $table->unique(['value', 'product_category_id']);
         });
     }
 

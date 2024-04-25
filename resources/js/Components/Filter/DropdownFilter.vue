@@ -14,6 +14,10 @@ import {router} from "@inertiajs/vue3";
 const props = defineProps({
     options: Object,
     field: String,
+    includePage: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 const activeOption = ref({});
@@ -22,12 +26,13 @@ onMounted(() => {
     activeOption.value = find(props.options, x => x.value === route().params[props.field]) ?? props.options[0];
 
     watch(() => activeOption.value, option => {
-        const query = {
-            ...(omit(route().params, [props.field])),
-            page: 1,
-        };
+        const query = omit(route().params, [props.field]);
 
-        if (option.value !== activeOption.value[props.field]) query[props.field] = option.value;
+        if (option.value && option.value !== activeOption.value[props.field]) query[props.field] = option.value;
+
+        if (props.includePage) {
+            query['page'] = 1;
+        }
 
         router.get(route(route().current(), query));
     });
@@ -37,7 +42,7 @@ onMounted(() => {
 <template>
     <Listbox v-model="activeOption">
         <div class="relative">
-            <ListboxButton class="flex items-center space-x-2 px-4 py-2.5 bg-white border border-gray-300 rounded text-gray-600 shadow-sm hover:bg-gray-200 focus:bg-gray-200 outline-none transition ease-in-out">
+            <ListboxButton class="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded text-gray-600 shadow-sm hover:bg-gray-200 focus:bg-gray-200 outline-none transition ease-in-out">
                 <span class="text-sm">{{ activeOption.label }}</span>
                 <FontAwesomeIcon :icon="faChevronDown" class="text-sm" />
             </ListboxButton>
@@ -51,7 +56,7 @@ onMounted(() => {
                 leave-to-class="translate-y-1 opacity-0"
             >
                 <ListboxOptions
-                    class="absolute mt-1 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                    class="absolute mt-1 max-h-[24rem] overflow-y-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
                 >
                     <ListboxOption
                         v-for="option in options"

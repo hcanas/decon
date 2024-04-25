@@ -16,9 +16,10 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Brand::class);
+            $table->string('image')->nullable()->unique();
+            $table->foreignIdFor(Brand::class)->nullable();
             $table->string('name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->unsignedDecimal('price');
             $table->string('status');
             $table->foreignIdFor(MeasurementUnit::class);

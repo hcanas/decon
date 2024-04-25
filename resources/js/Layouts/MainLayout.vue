@@ -60,11 +60,11 @@ onMounted(() => {
                         Home
                     </HorizontalNavLink>
 
-                    <HorizontalNavLink :href="route('products.index')" :active="route().current('products.index')" class="hidden md:inline">
+                    <HorizontalNavLink v-if="!$page.props.auth?.user" :href="route('products.index')" :active="route().current('products.index')" class="hidden md:inline">
                         Products
                     </HorizontalNavLink>
 
-                    <HorizontalNavLink :href="route('cart')" class="group">
+                    <HorizontalNavLink v-if="!$page.props.auth?.user" :href="route('cart')" class="group">
                         <div class="relative">
                             <span class="absolute -top-2 -right-3 text-xs text-white px-1.5 py-0.5 bg-red-500 rounded-full">{{ cartItemCount }}</span>
                             <FontAwesomeIcon :icon="faShoppingCart" class="relative text-gray-600 dark:text-gray-300 group-hover:text-primary transition ease-in-out" />
@@ -75,7 +75,7 @@ onMounted(() => {
                 <div class="flex items-center space-x-6">
                     <DarkModeToggle class="hidden md:inline" />
 
-                    <Link :href="route(isLoggedIn ? 'admin.dashboard' : 'login')" class="hidden md:inline text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:text-white hover:bg-primary dark:hover:text-white dark:hover:bg-primary px-3 py-1 rounded shadow-sm transition ease-in-out">
+                    <Link :href="isLoggedIn ? route('admin.dashboard', { year: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', year: 'numeric' }) }) : route('login')" class="hidden md:inline text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:text-white hover:bg-primary dark:hover:text-white dark:hover:bg-primary px-3 py-1 rounded shadow-sm transition ease-in-out">
                         <div class="flex items-center">
                             <span class="text-sm">{{ isLoggedIn ? 'Dashboard' : 'Login' }}</span>
                             <FontAwesomeIcon :icon="faArrowRight" class="w-6 text-center text-xs" />
@@ -101,14 +101,14 @@ onMounted(() => {
                         </div>
                     </NavLink>
 
-                    <NavLink :href="route('products.index')" :active="route().current('products.index')">
+                    <NavLink v-if="!$page.props.auth?.user" :href="route('products.index')" :active="route().current('products.index')">
                         <div class="flex items-center space-x-2">
                             <FontAwesomeIcon :icon="faSuitcaseMedical" class="w-6 text-center" />
                             <span>Products</span>
                         </div>
                     </NavLink>
 
-                    <NavLink v-if="$page.props.auth?.user" :href="route('login')">
+                    <NavLink v-if="$page.props.auth?.user" :href="route('admin.dashboard', { year: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', year: 'numeric' }) })">
                         <div class="flex items-center space-x-2">
                             <FontAwesomeIcon :icon="faChartSimple" class="w-6 text-center" />
                             <span>Dashboard</span>

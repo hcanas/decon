@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\BrandSearchController;
+use App\Http\Controllers\Admin\Dashboard\CustomerReportController;
+use App\Http\Controllers\Admin\Dashboard\ProductReportController;
+use App\Http\Controllers\Admin\Dashboard\PurchaseOrderReportController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MeasurementUnitSearchController;
 use App\Http\Controllers\Admin\ProductCategorySearchController;
 use App\Http\Controllers\Admin\ProductController;
@@ -8,14 +12,13 @@ use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Http\Controllers\Admin\QuotationController;
 use App\Http\Controllers\Admin\QuotationItemController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\JSON\BrandController;
-use App\Http\Controllers\JSON\ProductCategoryController;
+use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,11 +36,8 @@ Route::resource('products', \App\Http\Controllers\ProductController::class);
 Route::get('cart', CartController::class)->name('cart');
 Route::resource('cart_items', CartItemController::class);
 Route::post('quotations', \App\Http\Controllers\QuotationController::class)->name('quotations.store');
-
-Route::prefix('json')->name('json.')->group(function () {
-    Route::get('product_categories', ProductCategoryController::class)->name('product.categories');
-    Route::get('brands', BrandController::class)->name('brands');
-});
+Route::get('brands', BrandController::class)->name('brands');
+Route::get('categories', ProductCategoryController::class)->name('categories');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -45,9 +45,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('Admin/Dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('purchase_orders', PurchaseOrderReportController::class)->name('purchase_orders');
+            Route::get('products', ProductReportController::class)->name('products');
+            Route::get('customers', CustomerReportController::class)->name('customers');
+        });
 
         Route::resource('users', UserController::class);
         Route::resource('products', ProductController::class)->except(['create', 'edit']);
