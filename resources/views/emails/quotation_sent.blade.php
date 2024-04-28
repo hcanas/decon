@@ -42,7 +42,7 @@
                 <tr>
                     <td class="p-2 border @php echo $item->status === 'unavailable' ? 'text-gray-400 line-through' : '' @endphp">
                         <div class="flex flex-col">
-                            <span>{{ $item->product->name }} ({{ $item->product->brand->value }})</span>
+                            <span>{{ $item->product->name }} ({{ $item->product->brand?->value ?? 'No Brand' }})</span>
                             <span class="text-sm w-96 truncate">{{ $item->product->description }}</span>
                         </div>
                     </td>

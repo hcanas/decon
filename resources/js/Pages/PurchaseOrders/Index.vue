@@ -26,6 +26,7 @@ import {includes, filter} from "lodash";
 import QuotationDetails from "@/Pages/PurchaseOrders/QuotationDetails.vue";
 import Filter from "@/Pages/PurchaseOrders/Filter.vue";
 import {useFormatter} from "@/Composables/formatter.js";
+import ItemForm from "@/Pages/Quotations/Forms/ItemForm.vue";
 
 defineProps({
     filters: Object,
@@ -55,6 +56,14 @@ const closeModal = () => {
         show: false,
         component: '',
         data: null,
+    };
+};
+
+const editItems = param => {
+    modalOptions.value = {
+        show: true,
+        component: 'item-form',
+        data: param,
     };
 };
 
@@ -142,10 +151,10 @@ const statusColors = {
                 <template #quotation="{ rowData }">
                     <div class="flex flex-col items-center">
                         <p class="text-sm">{{ `${filter(rowData.quotation.items, x => x.status === 'available').length} items` }}</p>
-                        <TableButton @click="viewQuotationDetails(rowData)" class="text-blue-500">
+                        <TableButton @click="includes(['delivered', 'cancelled'], rowData.status) ? viewQuotationDetails(rowData) : editItems(rowData)" class="text-blue-500">
                             <div class="flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faEye" />
-                                <span>View</span>
+                                <FontAwesomeIcon :icon="includes(['delivered', 'cancelled'], rowData.status) ? faEye : faPencil" />
+                                <span>{{ includes(['delivered', 'cancelled'], rowData.status) ? 'View' : 'Edit' }}</span>
                             </div>
                         </TableButton>
                     </div>
@@ -217,7 +226,7 @@ const statusColors = {
         </div>
     </AuthenticatedLayout>
 
-    <Modal :show="modalOptions.show" @close="closeModal()">
+    <Modal :show="modalOptions.show" @close="closeModal()" :width="modalOptions.component === 'item-form' ? 'full' : ''">
         <template #title>
             <Transition
                 leave-active-class="opacity duration-200 ease-in-out"
@@ -234,7 +243,8 @@ const statusColors = {
             leave-active-class="opacity duration-200 ease-in-out"
             leave-to-class="opacity-0"
         >
-            <QuotationDetails v-if="modalOptions.component === 'quotation-details'" :data="modalOptions.data" />
+            <ItemForm v-if="modalOptions.component === 'item-form'" :data="modalOptions.data.quotation" @saved="closeModal()" />
+            <QuotationDetails v-else-if="modalOptions.component === 'quotation-details'" :data="modalOptions.data" />
             <PaymentForm v-else-if="modalOptions.component === 'payment-form'" :data="modalOptions.data" @saved="closeModal()" />
             <DeliveryForm v-else-if="modalOptions.component === 'delivery-form'" :data="modalOptions.data" @saved="closeModal()" />
             <ConfirmDelivery v-else-if="modalOptions.component === 'confirm-delivery'" :data="modalOptions.data" @confirmed="closeModal()" />
