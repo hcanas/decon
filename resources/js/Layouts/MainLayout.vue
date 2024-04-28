@@ -60,11 +60,11 @@ onMounted(() => {
                         Home
                     </HorizontalNavLink>
 
-                    <HorizontalNavLink v-if="!$page.props.auth?.user" :href="route('products.index')" :active="route().current('products.index')" class="hidden md:inline">
+                    <HorizontalNavLink :href="route('products.index')" :active="route().current('products.index')" class="hidden md:inline">
                         Products
                     </HorizontalNavLink>
 
-                    <HorizontalNavLink v-if="!$page.props.auth?.user" :href="route('cart')" class="group">
+                    <HorizontalNavLink :href="route('cart')" class="group">
                         <div class="relative">
                             <span class="absolute -top-2 -right-3 text-xs text-white px-1.5 py-0.5 bg-red-500 rounded-full">{{ cartItemCount }}</span>
                             <FontAwesomeIcon :icon="faShoppingCart" class="relative text-gray-600 dark:text-gray-300 group-hover:text-primary transition ease-in-out" />
