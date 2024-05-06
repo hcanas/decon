@@ -37,13 +37,13 @@ watch(
     <div class="relative">
         <Combobox v-model="model">
             <ComboboxInput
-                class="w-full border-gray-300 focus:border-primary-200 focus:ring-0 rounded-md shadow-sm z-0"
-                :class="{ 'bg-gray-100 cursor-not-allowed': disabled }"
+                class="w-full dark:bg-neutral-900 border-neutral-300 dark:border-neutral-950 focus:border-primary-300 dark:focus:border-primary focus:ring-0 rounded-md z-0"
+                :class="{ 'bg-neutral-100 cursor-not-allowed': disabled }"
                 @change="keyword = $event.target.value"
                 :disabled="disabled"
                 autofocus
             />
-            <ComboboxOptions class="absolute mt-1 py-1 max-h-60 w-full border rounded-lg bg-white shadow-lg z-10">
+            <ComboboxOptions class="absolute mt-1 py-1 max-h-60 w-full rounded-lg bg-white dark:bg-neutral-900 shadow-lg z-10">
                 <ComboboxOption
                     v-for="(item, key) in selection"
                     as="template"
@@ -51,7 +51,7 @@ watch(
                     :value="item"
                     v-slot="{ active }"
                 >
-                    <li class="relative text-sm px-3 py-1 cursor-pointer hover:text-white hover:bg-primary" :class="{ 'bg-primary text-white': active }">
+                    <li class="relative text-sm px-3 py-1 cursor-pointer text-neutral-800 dark:text-white hover:text-white hover:bg-primary" :class="{ 'text-white bg-primary': active }">
                         {{ item }}
                     </li>
                 </ComboboxOption>

@@ -9,17 +9,10 @@ import Head from "@/Components/Head.vue";
 import DeleteProduct from "@/Pages/Products/Partials/DeleteProduct.vue";
 import Pagination from "@/Components/Pagination.vue";
 import CustomTable from "@/Components/Table/CustomTable.vue";
-import Filter from "@/Pages/Products/Filter.vue";
 import TableTag from "@/Components/Table/TableTag.vue";
-import {
-    faBoxArchive,
-    faCheck,
-    faChevronDown,
-    faPencil, faXmark,
-} from "@fortawesome/free-solid-svg-icons";
-import TableButton from "@/Components/Table/TableButton.vue";
-import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import TableMenu from "@/Components/Table/TableMenu.vue";
+import TableMenuItem from "@/Components/Table/TableMenuItem.vue";
+import AdminFilter from "@/Pages/Products/AdminFilter.vue";
 
 defineProps({
     filters: Object,
@@ -30,9 +23,9 @@ defineProps({
 });
 
 const statusColors = {
-    available: 'text-green-500',
-    unavailable: 'text-red-500',
-    archived: 'text-cyan-500',
+    available: 'text-green-600 dark:text-green-500',
+    unavailable: 'text-red-600 dark:text-red-500',
+    archived: 'text-cyan-600 dark:text-cyan-500',
 };
 
 const columns = [
@@ -85,82 +78,56 @@ const updateStatus = (id, status) => {
             </template>
         </Head>
 
-        <div class="mt-12 flex flex-col space-y-3">
-            <Filter />
+        <div class="mt-6 md:mt-12 flex flex-col space-y-3">
+            <AdminFilter />
 
             <CustomTable :rows="products.data" :columns="columns">
                 <template #image="{ rowData }">
-                    <img :src="`/storage/images/${rowData.image ?? 'placeholder.png'}`" class="w-24 mx-auto" />
+                    <img :src="`/storage/images/${rowData.image ?? 'placeholder.png'}`" class="w-24 md:mx-auto" />
                 </template>
 
                 <template #product="{ rowData }">
                     <div class="flex flex-col">
                         <p>{{ rowData.name }}</p>
-                        <p class="text-sm text-gray-600">{{ rowData.description }}</p>
+                        <p class="text-sm">{{ rowData.description }}</p>
                     </div>
                 </template>
 
+                <template #brand="{ rowData }">
+                    <p>{{ rowData.brand ?? 'No Brand' }}</p>
+                </template>
+
                 <template #category="{ rowData }">
-                    <p class="flex flex-col items-center space-x-1 text-sm">
+                    <p class="flex md:flex-col items-center space-x-1 text-sm">
                         <span>{{ rowData.category }}</span>
-                        <span v-if="rowData.sub_category">&darr;</span>
+                        <span v-if="rowData.sub_category" class="hidden md:block">&darr;</span>
+                        <span v-if="rowData.sub_category" class="md:hidden">&rarr;</span>
                         <span v-if="rowData.sub_category">{{ rowData.sub_category }}</span>
                     </p>
                 </template>
 
                 <template #status="{ rowData }">
-                    <div class="flex justify-center items-center space-x-1">
-                        <TableTag class="mx-auto" :class="statusColors[rowData.status]">{{ rowData.status }}</TableTag>
-                        <Menu as="div" class="relative">
-                            <MenuButton class="text-sm z-0">
-                                <FontAwesomeIcon :icon="faChevronDown" class="w-3 h-3" />
-                            </MenuButton>
+                    <TableTag class="md:mx-auto" :class="statusColors[rowData.status]">{{ rowData.status }}</TableTag>
+                </template>
 
-                            <Transition
-                                enter-active-class="transition duration-100 ease-out"
-                                enter-from-class="transform scale-95 opacity-0"
-                                enter-to-class="transform scale-100 opacity-100"
-                                leave-active-class="transition duration-75 ease-in"
-                                leave-from-class="transform scale-100 opacity-100"
-                                leave-to-class="transform scale-95 opacity-0"
-                            >
-                                <MenuItems as="div" class="absolute top-6 -left-24 p-4 bg-gray-50 shadow rounded z-10 w-max flex flex-col space-y-3">
-                                    <MenuItem as="div">
-                                        <TableButton @click="showModal('product-form', rowData)" class="block text-blue-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faPencil" />
-                                                <span>Edit</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                    <MenuItem v-if="rowData.status !== 'available'"  s="div">
-                                        <TableButton @click="updateStatus(rowData.id, 'available')" class="block text-green-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faCheck" />
-                                                <span>Mark as available</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                    <MenuItem  v-if="rowData.status !== 'unavailable'" as="div">
-                                        <TableButton @click="updateStatus(rowData.id, 'unavailable')" class="block text-red-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faXmark" />
-                                                <span>Mark as unavailable</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                    <MenuItem  v-if="rowData.status !== 'archived'" as="div">
-                                        <TableButton @click="updateStatus(rowData.id, 'archived')" class="block text-cyan-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faBoxArchive" />
-                                                <span>Archive</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                </MenuItems>
-                            </Transition>
-                        </Menu>
-                    </div>
+                <template #actions="{ rowData }">
+                    <TableMenu>
+                        <TableMenuItem @click="showModal('product-form', rowData)">
+                            Edit
+                        </TableMenuItem>
+                        <TableMenuItem v-if="rowData.status !== 'available'" @click="updateStatus(rowData.id, 'available')">
+                            Mark as available
+                        </TableMenuItem>
+                        <TableMenuItem v-if="rowData.status !== 'unavailable'" @click="updateStatus(rowData.id, 'unavailable')">
+                            Mark as unavailable
+                        </TableMenuItem>
+                        <TableMenuItem v-if="rowData.status !== 'archived'" @click="updateStatus(rowData.id, 'archived')">
+                            Archive
+                        </TableMenuItem>
+                        <TableMenuItem @click="showModal('delete-product', rowData)" class="text-red-600 dark:text-red-500">
+                            Delete
+                        </TableMenuItem>
+                    </TableMenu>
                 </template>
             </CustomTable>
 
@@ -178,11 +145,11 @@ const updateStatus = (id, status) => {
         <Modal :show="modalOptions.show" @close="closeModal()">
             <template #title>
                 <span v-if="modalOptions.component === 'product-form'">Product Information</span>
-                <span v-else-if="modalOptions.component === 'delete-dialog'">Delete Product</span>
+                <span v-else-if="modalOptions.component === 'delete-product'">Delete Product</span>
             </template>
 
             <ProductForm v-if="modalOptions.component === 'product-form'" :data="modalOptions.data" @close="closeModal" />
-            <DeleteProduct v-else-if="modalOptions.component === 'delete-dialog'" :data="modalOptions.data" @close="closeModal" @success="updateProducts" />
+            <DeleteProduct v-else-if="modalOptions.component === 'delete-product'" :data="modalOptions.data" @close="closeModal" @success="updateProducts" />
         </Modal>
     </AuthenticatedLayout>
 </template>

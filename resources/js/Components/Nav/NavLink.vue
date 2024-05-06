@@ -13,8 +13,8 @@ const props = defineProps({
 
 const classes = computed(() =>
     props.active
-        ? 'text-sm text-primary bg-primary-100 font-medium px-6 py-3 md:rounded transition duration-0 ease-in-out'
-        : 'text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium hover:bg-primary-100 px-6 py-3 md:rounded transition duration-0 ease-in-out'
+        ? 'text-sm text-primary dark:text-primary bg-primary-100 dark:bg-primary-200 font-medium px-6 py-3 md:rounded transition ease-in-out'
+        : 'text-sm dark:text-white hover:text-primary dark:hover:text-primary font-medium hover:bg-primary-100 dark:hover:bg-primary-200 px-6 py-3 md:rounded transition ease-in-out'
 );
 </script>
 

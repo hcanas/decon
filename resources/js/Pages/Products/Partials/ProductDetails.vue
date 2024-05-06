@@ -25,15 +25,15 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex items-stretch">
+    <div class="flex flex-col md:flex-row md:items-stretch md:space-x-3 space-y-3 md:space-y-0">
         <div class="flex-shrink-0">
-            <img :src="`/storage/images/${product.image ?? 'placeholder.png'}`" class="w-48" />
+            <img :src="`/storage/images/${product.image ?? 'placeholder.png'}`" class="mx-auto w-48 rounded" />
         </div>
-        <div class="flex-grow flex flex-col justify-between">
-            <div class="flex flex-col space-y-1">
-                <p class="text-xl font-medium">{{ product.name }}</p>
-                <p class="text-sm text-gray-600">Brand: {{ product.brand ?? 'No Brand' }}</p>
-                <p class="text-gray-600 text-wrap">{{ product.description }}</p>
+        <div class="flex-grow flex flex-col md:justify-between space-y-3 md:space-y-0">
+            <div class="flex flex-col items-center space-y-1">
+                <p class="text-xl font-medium text-center">{{ product.name }}</p>
+                <p class="text-sm">Brand: {{ product.brand ?? 'No Brand' }}</p>
+                <p class=" text-wrap">{{ product.description }}</p>
                 <p>{{ formatCurrency(product.price) }} / {{ product.measurement_unit }}</p>
             </div>
             <SecondaryButton v-if="cart.exists(product.id)" @click="cart.remove(product.id)">Remove From Cart</SecondaryButton>

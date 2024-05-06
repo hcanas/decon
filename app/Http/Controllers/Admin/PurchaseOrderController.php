@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePurchaseOrder;
+use App\Models\ActivityLog;
 use App\Models\PurchaseOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +78,8 @@ class PurchaseOrderController extends Controller
     {
         $purchaseOrder->fill($request->validated());
 
+        DB::beginTransaction();
+
         if ($purchaseOrder->isDirty('payment_details') AND empty($purchaseOrder->delivery_date)) {
             if (empty($purchaseOrder->payment_details)) {
                 $purchaseOrder->fill(['status' => 'unpaid']);
@@ -85,6 +88,12 @@ class PurchaseOrderController extends Controller
             }
 
             $purchaseOrder->save();
+
+            ActivityLog::create([
+                'user_id' => $request->user()->id,
+                'category' => 'purchase_orders',
+                'description' => 'Updated payment details of purchase order #'.$purchaseOrder->reference_number.'.',
+            ]);
         } elseif ($purchaseOrder->isDirty('delivery_date') AND $purchaseOrder->payment_details) {
             if (empty($purchaseOrder->delivery_date)) {
                 $purchaseOrder->fill(['status' => 'paid']);
@@ -93,13 +102,33 @@ class PurchaseOrderController extends Controller
             }
 
             $purchaseOrder->save();
+
+            ActivityLog::create([
+                'user_id' => $request->user()->id,
+                'category' => 'purchase_orders',
+                'description' => 'Updated delivery date of purchase order #'.$purchaseOrder->reference_number.'.',
+            ]);
         } elseif ($purchaseOrder->isDirty('status')) {
             if ($purchaseOrder->status === 'delivered' AND $purchaseOrder->getOriginal('status') === 'for delivery') {
                 $purchaseOrder->save();
+
+                ActivityLog::create([
+                    'user_id' => $request->user()->id,
+                    'category' => 'purchase_orders',
+                    'description' => 'Confirmed delivery of purchase order #'.$purchaseOrder->reference_number.'.',
+                ]);
             } elseif ($purchaseOrder->status === 'cancelled' AND $purchaseOrder->getOriginal('status') !== 'delivered') {
                 $purchaseOrder->save();
+
+                ActivityLog::create([
+                    'user_id' => $request->user()->id,
+                    'category' => 'purchase_orders',
+                    'description' => 'Cancelled purchase order  #'.$purchaseOrder->reference_number.'.',
+                ]);
             }
         }
+
+        DB::commit();
 
         return redirect()->back();
     }

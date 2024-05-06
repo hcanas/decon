@@ -12,9 +12,8 @@ defineProps({
 <template>
     <Head :title="title" />
 
-    <div class="flex items-center justify-between">
-        <h1 class="text-2xl dark:text-gray-300 font-semibold">{{ title }}</h1>
-
+    <div class="flex flex-col md:flex-row items-center md:justify-between space-y-3">
+        <h1 class="text-2xl font-semibold">{{ title }}</h1>
         <slot name="actions" />
     </div>
 </template>

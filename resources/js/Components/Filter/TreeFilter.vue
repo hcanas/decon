@@ -3,6 +3,8 @@ import {router} from '@inertiajs/vue3';
 import {omit} from "lodash";
 import {ref} from "vue";
 import {Popover, PopoverButton, PopoverPanel} from "@headlessui/vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps({
     options: Object,
@@ -38,12 +40,15 @@ const isActive = (value, subValue) => {
 
 <template>
     <Popover class="relative">
-        <PopoverButton class="flex items-center space-x-1 px-4 py-2 bg-white border border-gray-300 rounded text-gray-600 shadow-sm hover:bg-gray-200 focus:bg-gray-200 outline-none transition ease-in-out">
-            <span class="text-sm">{{ activeOption }}</span>
-            <span v-if="activeSubOption" class="text-sm">&rarr; {{ activeSubOption }}</span>
+        <PopoverButton class="w-full md:w-fit flex items-center justify-between space-x-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-950 hover:bg-neutral-100 dark:hover:bg-neutral-950 rounded outline-none transition ease-in-out">
+            <div class="flex items-center space-x-1">
+                <span class="text-sm">{{ activeOption }}</span>
+                <span v-if="activeSubOption" class="text-sm">&rarr; {{ activeSubOption }}</span>
+            </div>
+            <FontAwesomeIcon :icon="faChevronDown" class="text-sm" />
         </PopoverButton>
 
-        <transition
+        <Transition
             enter-active-class="transition duration-200 ease-out"
             enter-from-class="translate-y-1 opacity-0"
             enter-to-class="translate-y-0 opacity-100"
@@ -51,8 +56,8 @@ const isActive = (value, subValue) => {
             leave-from-class="translate-y-0 opacity-100"
             leave-to-class="translate-y-1 opacity-0"
         >
-            <PopoverPanel class="absolute z-10 w-full md:w-max md:max-h-96 overflow-y-auto">
-                <div class="flex flex-col space-y-2 px-6 py-3 mt-1 bg-white border rounded shadow">
+            <PopoverPanel class="absolute mt-1 z-10 w-full md:w-max md:max-h-96 shadow-lg ring-1 ring-black/5 rounded overflow-y-auto">
+                <div class="flex flex-col space-y-2 px-6 py-3 mt-1 bg-white dark:bg-neutral-900 rounded shadow">
                     <a href="#" @click.prevent="filter()" :class="{ 'active': activeOption === defaultValue }">{{ defaultValue }}</a>
                     <div v-for="option in options">
                         <a href="#" @click.prevent="filter(option.value)" :class="{ 'active': isActive(option.value) }">{{ option.value }}</a>
@@ -64,7 +69,7 @@ const isActive = (value, subValue) => {
                     </div>
                 </div>
             </PopoverPanel>
-        </transition>
+        </Transition>
     </Popover>
 </template>
 

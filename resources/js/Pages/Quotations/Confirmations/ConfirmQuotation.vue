@@ -1,5 +1,6 @@
 <script setup>
 import {useForm} from "@inertiajs/vue3";
+import SuccessButton from "@/Components/Button/SuccessButton.vue";
 
 const props = defineProps({
     data: Object,
@@ -20,11 +21,11 @@ const confirm = () => {
 
 <template>
     <div class="flex flex-col space-y-6">
-        <p class="dark:text-gray-300">You are about to confirm this quotation. This record will be locked to prevent further modifications and a purchase order will be created. </p>
+        <p class="">You are about to confirm this quotation. This record will be locked to prevent further modifications and a purchase order will be created. </p>
         <div class="flex justify-end">
-            <button @click="confirm()" class="text-white text-sm uppercase bg-green-600 hover:bg-green-500 px-4 py-1 rounded shadow-sm transition ease-in-out">
+            <SuccessButton @click="confirm()">
                 Confirm Quotation
-            </button>
+            </SuccessButton>
         </div>
     </div>
 </template>

@@ -8,9 +8,13 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MeasurementUnitSearchController;
 use App\Http\Controllers\Admin\ProductCategorySearchController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\Profile\ActivityLogController;
+use App\Http\Controllers\Admin\Profile\ChangePasswordController;
+use App\Http\Controllers\Admin\Profile\AccountInformationController;
 use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Http\Controllers\Admin\QuotationController;
 use App\Http\Controllers\Admin\QuotationItemController;
+use App\Http\Controllers\Admin\UserActivityLogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
@@ -40,9 +44,10 @@ Route::get('brands', BrandController::class)->name('brands');
 Route::get('categories', ProductCategoryController::class)->name('categories');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('profile', [AccountInformationController::class, 'edit'])->name('profile.edit');
+    Route::patch('profile', [AccountInformationController::class, 'update'])->name('profile.update');
+    Route::get('profile/change_password', [ChangePasswordController::class, 'edit'])->name('profile.change_password');
+    Route::get('profile/activity_log', ActivityLogController::class)->name('profile.activity_log');
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
@@ -53,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('customers', CustomerReportController::class)->name('customers');
         });
 
+        Route::get('users/{user}/activity_log', UserActivityLogController::class)->name('user_activity_log');
         Route::resource('users', UserController::class);
         Route::resource('products', ProductController::class)->except(['create', 'edit']);
         Route::get('brands_search', BrandSearchController::class)->name('brands.search');

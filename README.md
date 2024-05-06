@@ -1,4 +1,5 @@
 
+
 # Installation Guide (Windows)
 ### Prerequisites
 - [Docker Desktop](https://docker.com/products/docker-desktop) 
@@ -68,7 +69,11 @@
    // browser URL
    http://localhost
    
-   // admin demo account
-   email: test@example.com
+   // admin user demo account
+   email: admin@example.com
+   password: testpassword
+   
+   // regular user demo account
+   email: regular@example.com
    password: testpassword
    ```

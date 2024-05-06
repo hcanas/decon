@@ -14,7 +14,7 @@ const props = defineProps({
 const classes = computed(() =>
     props.active
         ? 'text-primary font-medium transition duration-0 ease-in-out'
-        : 'text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition duration-0 ease-in-out'
+        : ' hover:text-primary dark:hover:text-primary font-medium transition duration-0 ease-in-out'
 );
 </script>
 

@@ -1,8 +1,6 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import SuccessButton from '@/Components/Button/SuccessButton.vue';
-import SecondaryButton from '@/Components/Button/SecondaryButton.vue';
-import { ref } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faCheckCircle } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -26,23 +24,24 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.patch(route('admin.users.update', { user: props.user.id }));
-    emit('success');
+    form.patch(route('admin.users.update', { user: props.user.id }), {
+        onSuccess: () => emit('success'),
+    });
 };
 </script>
 
 <template>
     <div class="flex flex-col space-y-6">
-        <p class="dark:text-gray-300">Change access level of <span class="px-1 py-0.5 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded">{{ user.email }}</span>.</p>
+        <p class="">Change access level of <span class="px-1 py-0.5 bg-neutral-100 dark:bg-neutral-700 rounded">{{ user.email }}</span>.</p>
 
         <RadioGroup v-model="form.access_level">
             <div class="space-y-2">
                 <RadioGroupOption :value="'regular'" as="template" v-slot="{ checked }">
-                    <div :class="checked ? 'bg-primary-100 shadow' : 'bg-gray-100'" class="px-4 py-3 rounded-lg cursor-pointer">
+                    <div :class="checked ? 'bg-primary-100 dark:bg-primary' : 'bg-neutral-100 dark:bg-neutral-900'" class="px-4 py-3 rounded-lg cursor-pointer">
                         <div class="flex items-center justify-between">
                             <div>
-                                <RadioGroupLabel as="p" class="text-gray-600 font-medium">Regular</RadioGroupLabel>
-                                <RadioGroupDescription as="p" class="text-sm text-gray-600">
+                                <RadioGroupLabel as="p" class=" font-medium">Regular</RadioGroupLabel>
+                                <RadioGroupDescription as="p" class="text-sm">
                                     Summary of regular user roles and responsibilities.
                                 </RadioGroupDescription>
                             </div>
@@ -52,11 +51,11 @@ const submit = () => {
                 </RadioGroupOption>
                 <RadioGroupOption :value="'admin'" as="template" v-slot="{ checked }">
 
-                    <div :class="checked ? 'bg-primary-100' : 'bg-gray-100'" class="px-4 py-3 rounded-lg cursor-pointer">
+                    <div :class="checked ? 'bg-primary-100 dark:bg-primary' : 'bg-neutral-100 dark:bg-neutral-900'" class="px-4 py-3 rounded-lg cursor-pointer">
                         <div class="flex items-center justify-between">
                             <div>
-                                <RadioGroupLabel as="p" class="text-gray-600 font-medium">Admin</RadioGroupLabel>
-                                <RadioGroupDescription as="p" class="text-sm text-gray-600">
+                                <RadioGroupLabel as="p" class=" font-medium">Admin</RadioGroupLabel>
+                                <RadioGroupDescription as="p" class="text-sm">
                                     Summary of admin user roles and responsibilities.
                                 </RadioGroupDescription>
                             </div>
@@ -67,8 +66,7 @@ const submit = () => {
             </div>
         </RadioGroup>
 
-        <div class="flex items-center justify-between">
-            <SecondaryButton @click="$emit('close')">Close</SecondaryButton>
+        <div class="flex items-center justify-end">
             <SuccessButton @click="submit">Update</SuccessButton>
         </div>
     </div>

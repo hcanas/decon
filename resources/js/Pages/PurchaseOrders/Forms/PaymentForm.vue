@@ -28,7 +28,7 @@ const save = () => {
             <div class="flex flex-col space-y-1">
                 <InputLabel value="Payment Details" />
                 <TextInput v-model="form.payment_details" />
-                <span class="text-xs italic dark:text-gray-300">(Example: Gcash - 1234567890)</span>
+                <p class="text-xs italic">(Example: Gcash - 1234567890)</p>
                 <InputError :message="form.errors.payment_details" />
             </div>
             <PrimaryButton type="submit" class="ms-auto">Save</PrimaryButton>

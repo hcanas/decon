@@ -5,6 +5,8 @@ import {indexOf, omit} from "lodash";
 import {Popover, PopoverButton, PopoverPanel} from "@headlessui/vue";
 import SecondaryButton from "@/Components/Button/SecondaryButton.vue";
 import PrimaryButton from "@/Components/Button/PrimaryButton.vue";
+import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const props = defineProps({
     options: Object,
@@ -33,13 +35,16 @@ const isActive = option => Boolean(indexOf(tempSelected.value, option) + 1);
 
 <template>
     <Popover class="relative">
-        <PopoverButton class="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded text-gray-600 shadow-sm hover:bg-gray-200 focus:bg-gray-200 outline-none transition ease-in-out">
-            <span v-if="selected.length === 1" class="text-sm">{{ selected[0] }}</span>
-            <span v-else-if="selected.length > 1" class="text-sm">{{ selected.length }} Selected</span>
-            <span v-else class="text-sm">{{ defaultValue }}</span>
+        <PopoverButton class="w-full md:w-fit flex items-center justify-between space-x-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-950 hover:bg-neutral-100 dark:hover:bg-neutral-950 rounded shadow outline-none transition ease-in-out">
+            <div class="flex items-center space-x-1">
+                <span v-if="selected.length === 1" class="text-sm">{{ selected[0] }}</span>
+                <span v-else-if="selected.length > 1" class="text-sm">{{ selected.length }} Selected</span>
+                <span v-else class="text-sm">{{ defaultValue }}</span>
+            </div>
+            <FontAwesomeIcon :icon="faChevronDown" class="text-sm" />
         </PopoverButton>
 
-        <transition
+        <Transition
             @after-leave="resetTempSelected()"
             enter-active-class="transition duration-200 ease-out"
             enter-from-class="translate-y-1 opacity-0"
@@ -48,26 +53,29 @@ const isActive = option => Boolean(indexOf(tempSelected.value, option) + 1);
             leave-from-class="translate-y-0 opacity-100"
             leave-to-class="translate-y-1 opacity-0"
         >
-            <PopoverPanel class="absolute z-10 md:w-[40rem] max-h-96 md:max-h-none flex flex-col space-y-6 px-6 py-3 mt-1 bg-white border rounded shadow overflow-y-auto">
+            <PopoverPanel class="absolute z-10 w-full md:min-w-72 max-h-96 md:max-h-none flex flex-col space-y-6 px-6 py-3 mt-1 bg-white dark:bg-neutral-900 rounded shadow-lg overflow-y-auto">
                 <div class="flex gap-x-1.5 gap-y-3 flex-wrap">
                     <div v-for="(option, key) in options">
                         <input type="checkbox" v-model="tempSelected" :id="key" :value="option" name="brandSelection" class="hidden" />
-                        <label :for="key" :class="{ 'active': isActive(option) }" class="text-sm px-3 py-1 border rounded bg-gray-50 cursor-pointer transition ease-in-out">{{ option }}</label>
+                        <label :for="key" :class="{ 'active': isActive(option) }" class="text-sm px-3 py-1 rounded dark:text-white dark:hover:text-neutral-800 bg-neutral-100 dark:bg-neutral-800 cursor-pointer transition ease-in-out">{{ option }}</label>
                     </div>
                 </div>
 
                 <div v-if="options.length" class="flex justify-between">
-                    <SecondaryButton @click="filter()">Reset</SecondaryButton>
-                    <PrimaryButton @click="filter(tempSelected)">Apply</PrimaryButton>
+                    <SecondaryButton @click="filter()" class="py-1.5">Reset</SecondaryButton>
+                    <PrimaryButton @click="filter(tempSelected)" class="py-1.5">Apply</PrimaryButton>
                 </div>
             </PopoverPanel>
-        </transition>
+        </Transition>
     </Popover>
 </template>
 
 <style scoped>
-    label:hover,
+    label:hover {
+        @apply bg-primary-300
+    }
+
     label.active {
-        @apply bg-primary text-white
+        @apply text-white bg-primary
     }
 </style>

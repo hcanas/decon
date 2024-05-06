@@ -1,5 +1,6 @@
 <script setup>
 import {useForm} from "@inertiajs/vue3";
+import SecondaryButton from "@/Components/Button/SecondaryButton.vue";
 
 const props = defineProps({
     data: Object,
@@ -20,11 +21,11 @@ const confirm = () => {
 
 <template>
     <div class="flex flex-col space-y-6">
-        <p class="dark:text-gray-300">You are about to send a quotation to {{ data.customer.email }}.</p>
+        <p class="">You are about to send a quotation to {{ data.customer.email }}.</p>
         <div class="flex justify-end">
-            <button @click="confirm()" class="text-white text-sm uppercase bg-blue-600 hover:bg-blue-500 px-4 py-1 rounded shadow-sm transition ease-in-out">
+            <SecondaryButton @click="confirm()">
                 Send Quotation
-            </button>
+            </SecondaryButton>
         </div>
     </div>
 </template>

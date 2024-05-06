@@ -45,12 +45,12 @@ onMounted(() => {
 
 <template>
     <div class="w-screen h-screen flex flex-col overflow-y-auto">
-        <nav class="h-16 md:h-auto relative z-50 md:z-0 dark:bg-gray-950 md:transition md:ease-in-out ">
-            <div class="absolute md:relative w-screen md:max-w-7xl h-full md:h-auto bg-white dark:bg-gray-950 md:mx-auto flex items-center md:space-x-24 px-3 md:px-0 md:py-12 z-10 md:z-0 transition ease-in-out ">
+        <nav class="h-16 md:h-auto relative z-50 md:z-0 dark:bg-neutral-950 md:transition md:ease-in-out ">
+            <div class="absolute md:relative w-screen md:max-w-7xl h-full md:h-auto bg-white dark:bg-neutral-950 md:mx-auto flex items-center md:space-x-24 px-3 md:px-0 md:py-12 z-10 md:z-0 transition ease-in-out ">
                 <div class="flex-grow">
                     <Link :href="route('home')">
                         <ApplicationLogo
-                            class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-300"
+                            class="block h-9 w-auto fill-current"
                         />
                     </Link>
                 </div>
@@ -66,8 +66,8 @@ onMounted(() => {
 
                     <HorizontalNavLink :href="route('cart')" class="group">
                         <div class="relative">
-                            <span class="absolute -top-2 -right-3 text-xs text-white px-1.5 py-0.5 bg-red-500 rounded-full">{{ cartItemCount }}</span>
-                            <FontAwesomeIcon :icon="faShoppingCart" class="relative text-gray-600 dark:text-gray-300 group-hover:text-primary transition ease-in-out" />
+                            <span class="absolute -top-2 -right-3 text-xs px-1.5 py-0.5 bg-red-500 rounded-full">{{ cartItemCount }}</span>
+                            <FontAwesomeIcon :icon="faShoppingCart" class="relative group-hover:text-primary transition ease-in-out" />
                         </div>
                     </HorizontalNavLink>
                 </div>
@@ -75,7 +75,7 @@ onMounted(() => {
                 <div class="flex items-center space-x-6">
                     <DarkModeToggle class="hidden md:inline" />
 
-                    <Link :href="isLoggedIn ? route('admin.dashboard', { year: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', year: 'numeric' }) }) : route('login')" class="hidden md:inline text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:text-white hover:bg-primary dark:hover:text-white dark:hover:bg-primary px-3 py-1 rounded shadow-sm transition ease-in-out">
+                    <Link :href="isLoggedIn ? route('admin.dashboard', { year: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', year: 'numeric' }) }) : route('login')" class="hidden md:inline bg-neutral-100 dark:bg-neutral-800 hover: hover:bg-primary dark:hover: dark:hover:bg-primary px-3 py-1 rounded shadow-sm transition ease-in-out">
                         <div class="flex items-center">
                             <span class="text-sm">{{ isLoggedIn ? 'Dashboard' : 'Login' }}</span>
                             <FontAwesomeIcon :icon="faArrowRight" class="w-6 text-center text-xs" />
@@ -83,12 +83,12 @@ onMounted(() => {
                     </Link>
 
                     <button @click="toggleMenu" class="md:hidden">
-                        <FontAwesomeIcon :icon="showMenu ? faXmark : faBars" class="w-4 h-4 dark:text-gray-300" />
+                        <FontAwesomeIcon :icon="showMenu ? faXmark : faBars" class="w-4 h-4" />
                     </button>
                 </div>
             </div>
 
-            <div :class="showMenu ? 'translate-y-16 h-screen' : ''" class="md:hidden w-full flex flex-col space-y-3 md:px-12 py-3 bg-white dark:bg-gray-950 overflow-hidden transform -translate-y-full md:transform-none transition ease-in-out ">
+            <div :class="showMenu ? 'translate-y-16 h-screen' : ''" class="md:hidden w-full flex flex-col space-y-3 md:px-12 py-3 bg-white dark:bg-neutral-950 overflow-hidden transform -translate-y-full md:transform-none transition ease-in-out ">
                 <div class="flex flex-col space-y-1">
                     <div class="mx-auto">
                         <DarkModeToggle />
@@ -125,7 +125,7 @@ onMounted(() => {
             </div>
         </nav>
 
-        <main class="w-full flex-grow bg-white dark:bg-gray-950 transition ease-in-out ">
+        <main class="w-full flex-grow bg-white dark:bg-neutral-950 transition ease-in-out ">
             <slot />
         </main>
     </div>

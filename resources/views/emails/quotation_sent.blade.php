@@ -40,15 +40,15 @@
                     }
                 @endphp
                 <tr>
-                    <td class="p-2 border @php echo $item->status === 'unavailable' ? 'text-gray-400 line-through' : '' @endphp">
+                    <td class="p-2 border @php echo $item->status === 'unavailable' ? ' line-through' : '' @endphp">
                         <div class="flex flex-col">
                             <span>{{ $item->product->name }} ({{ $item->product->brand?->value ?? 'No Brand' }})</span>
                             <span class="text-sm w-96 truncate">{{ $item->product->description }}</span>
                         </div>
                     </td>
-                    <td class="text-right p-2 border @php echo $item->status === 'unavailable' ? 'text-gray-400 line-through' : '' @endphp">{{ number_format($item->qty)  }}</td>
-                    <td class="text-right p-2 border @php echo $item->status === 'unavailable' ? 'text-gray-400 line-through' : '' @endphp">&#8369;{{ number_format($item->price, 2) }}</td>
-                    <td class="text-right p-2 border @php echo $item->status === 'unavailable' ? 'text-gray-400 line-through' : '' @endphp">&#8369;{{ number_format($item->qty * $item->price, 2) }}</td>
+                    <td class="text-right p-2 border @php echo $item->status === 'unavailable' ? ' line-through' : '' @endphp">{{ number_format($item->qty)  }}</td>
+                    <td class="text-right p-2 border @php echo $item->status === 'unavailable' ? ' line-through' : '' @endphp">&#8369;{{ number_format($item->price, 2) }}</td>
+                    <td class="text-right p-2 border @php echo $item->status === 'unavailable' ? ' line-through' : '' @endphp">&#8369;{{ number_format($item->qty * $item->price, 2) }}</td>
                 </tr>
             @endforeach
             <tr>

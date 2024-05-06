@@ -48,7 +48,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the indexable data array for the model.
-     * 
+     *
      * @return array<string, mixed>
      */
     public function toSearchableArray() : array
@@ -61,5 +61,10 @@ class User extends Authenticatable implements MustVerifyEmail
             'access_level' => $this->access_level,
             'status' => $this->status,
         ];
+    }
+
+    public function activityLog()
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 }

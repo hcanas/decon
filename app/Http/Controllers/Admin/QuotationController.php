@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateQuotationRequest;
 use App\Mail\QuotationSent;
+use App\Models\ActivityLog;
 use App\Models\Quotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -69,16 +70,42 @@ class QuotationController extends Controller
     {
         $quotation->load('customer', 'items.product.brand');
 
+        DB::beginTransaction();
+
         if ($request->validated('status') === 'sent') {
+            $quotation->fill([
+                'status' => 'sent',
+            ])->save();
+
+            ActivityLog::create([
+                'user_id' => $request->user()->id,
+                'category' => 'quotations',
+                'description' => 'Sent quotation to '.$quotation->customer->email.'.',
+            ]);
+
             Mail::to($quotation->customer->email)->send(new QuotationSent($quotation));
+        } elseif ($request->validated('status') === 'for approval') {
+            $quotation->fill([
+                'status' => 'for approval',
+            ])->save();
+
+            ActivityLog::create([
+                'user_id' => $request->user()->id,
+                'category' => 'quotations',
+                'description' => 'Requested quotation approval for '.$quotation->customer->email.'.',
+            ]);
         } elseif ($request->validated('status') === 'cancelled') {
             $quotation->fill([
                 'status' => 'cancelled',
             ])->save();
+
+            ActivityLog::create([
+                'user_id' => $request->user()->id,
+                'category' => 'quotations',
+                'description' => 'Cancelled quotation request of '.$quotation->customer->email.'.',
+            ]);
         } elseif ($request->validated()['status'] === 'confirmed') {
             if (empty($quotation->purchaseOrder()->first())) {
-                DB::beginTransaction();
-
                 $quotation->purchaseOrder()->create([
                     'reference_number' => date('ymd', strtotime('now')).'-'.bin2hex(random_bytes(3)),
                     'status' => 'unpaid',
@@ -88,9 +115,15 @@ class QuotationController extends Controller
                     'status' => 'confirmed',
                 ])->save();
 
-                DB::commit();
+                ActivityLog::create([
+                    'user_id' => $request->user()->id,
+                    'category' => 'quotations',
+                    'description' => 'Confirmed quotation of '.$quotation->customer->email.'.',
+                ]);
             }
         }
+
+        DB::commit();
 
         return redirect()->back();
     }
