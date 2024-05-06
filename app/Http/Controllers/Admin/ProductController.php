@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\ActivityLog;
 use App\Models\Brand;
 use App\Models\MeasurementUnit;
 use App\Models\Product;
@@ -40,7 +41,12 @@ class ProductController extends Controller
 
         $products = Product::search($request->get('keyword'), function ($meilisearch, $query, $options) use ($validator) {
             if (!empty($validator->validated()['brands'])) {
-                $filters[] = 'brand IN ['.$validator->validated()['brands'].']';
+                // enclose each value in quotation marks
+                $brands = array_map(function ($brand) {
+                    return '"'.$brand.'"';
+                }, explode(',', $validator->validated()['brands']));
+
+                $filters[] = 'brand IN ['.implode(',', $brands).']';
             }
 
             if (!empty($validator->validated()['category'])) {
@@ -127,6 +133,12 @@ class ProductController extends Controller
             'product_category_id' => $productCategory->id,
         ]);
 
+        ActivityLog::create([
+            'user_id' => auth()->user()->id,
+            'category' => 'products',
+            'description' => 'Added a new product - '.$request->validated()['name'].'.',
+        ]);
+
         if (isset($file)) {
             $image = Image::read($file);
             $image->resize(300, 300);
@@ -136,14 +148,6 @@ class ProductController extends Controller
         DB::commit();
 
         return redirect()->back();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -202,6 +206,12 @@ class ProductController extends Controller
 
         $product->save();
 
+        ActivityLog::create([
+            'user_id' => auth()->user()->id,
+            'category' => 'products',
+            'description' => 'Updated product details of '.$product->name.'.',
+        ]);
+
         if (isset($file)) {
             $image = Image::read($file);
             $image->resize(300, 300);
@@ -218,7 +228,17 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        DB::beginTransaction();
+
         $product->delete();
+
+        ActivityLog::create([
+            'user_id' => auth()->user()->id,
+            'category' => 'products',
+            'description' => 'Deleted product - '.$product->name.'.',
+        ]);
+
+        DB::commit();
 
         return redirect()->back();
     }

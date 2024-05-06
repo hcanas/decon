@@ -99,7 +99,7 @@ onMounted(() => {
         <section class="w-full md:max-w-7xl md:mx-auto px-3 md:px-0 py-6">
             <Head title="Cart" />
 
-            <p v-if="form.wasSuccessful" class="p-3 bg-gray-50 text-green-500 rounded mt-6">Your quotation request is under review. You will receive an email when the review is done.</p>
+            <p v-if="form.wasSuccessful" class="p-3 bg-neutral-50 dark:bg-neutral-900 text-green-600 dark:text-green-500 rounded mt-6">Your quotation request is under review. You will receive an email when the review is done.</p>
 
             <div v-if="items.length" class="flex flex-col space-y-6 mt-6">
                 <CustomTable :columns="columns" :rows="items">
@@ -108,8 +108,8 @@ onMounted(() => {
                             <img src="/storage/images/placeholder.png" class="w-24 rounded" />
                             <div class="flex flex-col">
                                 <p>{{ rowData.brand }} ({{ rowData.name }})</p>
-                                <p class="text-sm text-gray-500 block truncate">{{ rowData.description }}</p>
-                                <TableButton @click="removeItem(rowData.id)" class="text-red-500">
+                                <p class="text-sm block truncate">{{ rowData.description }}</p>
+                                <TableButton @click="removeItem(rowData.id)" class="text-red-600 dark:text-red-500">
                                     <div class="flex items-center space-x-1">
                                         <FontAwesomeIcon :icon="faTrashCan" />
                                         <span>Remove</span>
@@ -120,7 +120,7 @@ onMounted(() => {
                     </template>
 
                     <template #qty="{ rowData }">
-                        <NumberInput :modelValue="rowData.qty" @update:modelValue="updateQty(rowData.id, $event)" class="text-right" />
+                        <NumberInput :modelValue="rowData.qty" @update:modelValue="updateQty(rowData.id, $event)" class="md:text-right" />
                         <InputError :message="form.errors[`items.${findItemIndex(rowData)}.qty`]" />
                     </template>
 
@@ -132,9 +132,9 @@ onMounted(() => {
                 <p class="font-bold text-right">{{ formatCurrency(total) }}</p>
 
                 <form>
-                    <div class="grid grid-cols-2 divide-x">
-                        <div class="flex flex-col space-y-3 pr-12">
-                            <h3 class="text-gray-600 italic font-medium border-b">For New Customers</h3>
+                    <div class="grid md:grid-cols-2 md:divide-x space-y-12 md:space-y-0">
+                        <div class="flex flex-col space-y-3 md:pr-12">
+                            <h3 class=" italic font-medium border-b">For New Customers</h3>
 
                             <div class="flex flex-col space-y-6">
                                 <div class="flex-grow flex flex-col">
@@ -154,14 +154,14 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <div class="flex flex-col space-y-3 pl-12">
-                            <h3 class="text-gray-600 italic font-medium border-b">For Repeat Customers</h3>
+                        <div class="flex flex-col space-y-3 md:pl-12">
+                            <h3 class=" italic font-medium border-b">For Repeat Customers</h3>
 
                             <div class="flex flex-col space-y-6">
                                 <div class="flex-grow flex flex-col">
                                     <InputLabel>Code</InputLabel>
                                     <TextInput v-model="form.code" />
-                                    <span class="text-sm text-gray-500 italic">This can be found in your previously requested quotations.</span>
+                                    <span class="text-sm italic">This can be found in your previously requested quotations.</span>
                                     <InputError :message="form.errors.code" />
                                 </div>
                             </div>
@@ -174,7 +174,7 @@ onMounted(() => {
                 </div>
             </div>
 
-            <p v-else class="p-3 bg-gray-50 text-gray-600 rounded mt-6">Your cart is empty.</p>
+            <p v-else class="p-3 bg-neutral-50 dark:bg-neutral-900 rounded mt-6">Your cart is empty.</p>
         </section>
     </MainLayout>
 </template>

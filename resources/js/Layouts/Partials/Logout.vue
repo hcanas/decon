@@ -12,7 +12,7 @@ const submit = () => {
 
 <template>
     <div class="flex flex-col space-y-6">
-        <p class="text-gray-600 dark:text-gray-300">Are you sure you want to logout?</p>
+        <p class="">Are you sure you want to logout?</p>
 
         <div class="flex items-center justify-between">
             <SecondaryButton @click="$emit('close')">Close</SecondaryButton>

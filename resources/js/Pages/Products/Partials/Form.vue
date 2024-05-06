@@ -68,7 +68,7 @@ const submit = () => {
                 <img :src="imagePreview ?? '/storage/images/placeholder.png'" class="max-w-[250px] max-h-[250px]" />
             </div>
             <InputError class="mt-2" :message="form.errors.image" />
-            <button @click="$refs.imageFile.click()" class="hover:underline text-sm text-blue-500">
+            <button @click="$refs.imageFile.click()" class="mt-2 hover:underline text-sm text-blue-600 dark:text-blue-500">
                 <div class="flex items-center space-x-1">
                     <FontAwesomeIcon :icon="faCamera" />
                     <span>Upload Image</span>
@@ -114,9 +114,8 @@ const submit = () => {
                     <InputError class="mt-2" :message="form.errors.price" />
                 </div>
 
-                <p v-if="form.wasSuccessful" class="text-green-600">Product has been {{ form.id ? 'updated' : 'created' }}.</p>
-
-                <div class="flex justify-end">
+                <div class="flex flex-col md:flex-row items-center md:space-x-3 space-y-1 md:space-y-0 md:justify-end">
+                    <p v-if="form.wasSuccessful" class="text-green-600">Product has been {{ form.id ? 'updated' : 'created' }}.</p>
                     <PrimaryButton type="submit">Save</PrimaryButton>
                 </div>
             </div>

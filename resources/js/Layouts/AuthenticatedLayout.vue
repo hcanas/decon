@@ -8,13 +8,12 @@ import Logout from './Partials/Logout.vue';
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
     faChartSimple,
-    faUserCog,
     faUsers,
     faSuitcaseMedical,
     faPersonRunning,
     faXmark,
     faBars,
-    faHome, faTruckFast, faFileInvoice
+    faHome, faTruckFast, faFileInvoice, faUserLock, faDoorOpen, faUserPen
 } from "@fortawesome/free-solid-svg-icons";
 import DarkModeToggle from "@/Components/DarkModeToggle.vue";
 
@@ -32,20 +31,20 @@ const closeModal = () => showModal.value = false;
 
 <template>
     <div class="w-screen h-screen flex flex-col md:flex-row overflow-hidden">
-        <nav class="md:w-96 h-16 md:h-full relative z-20 md:z-0 md:bg-gray-100 dark:md:bg-gray-900 md:transition md:ease-in-out">
-            <div class="absolute md:relative w-screen md:w-full h-full md:h-auto flex items-center justify-between md:justify-center px-3 md:px-6 md:py-12 bg-gray-100 dark:bg-gray-900 z-10 md:z-0 transition ease-in-out">
+        <nav class="md:w-96 h-16 md:h-full relative z-20 md:z-0 dark:bg-neutral-800 transition ease-in-out">
+            <div class="absolute md:relative w-screen md:w-full h-full md:h-auto flex items-center justify-between md:justify-center px-3 md:px-6 md:py-12 z-10 md:z-0 transition ease-in-out">
                 <Link :href="route('home')">
                     <ApplicationLogo
-                        class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-300"
+                        class="block h-9 w-auto fill-current dark:text-white"
                     />
                 </Link>
 
                 <button @click="toggleMenu" class="md:hidden">
-                    <FontAwesomeIcon :icon="showMenu ? faXmark : faBars" class="dark:text-gray-300" />
+                    <FontAwesomeIcon :icon="showMenu ? faXmark : faBars" class="text-neutral-800 dark:text-white" />
                 </button>
             </div>
 
-            <div :class="showMenu ? 'translate-y-16 h-screen' : ''" class="w-full flex flex-col space-y-3 md:px-12 py-3 bg-gray-100 dark:bg-gray-900 overflow-hidden transform -translate-y-full md:transform-none transition ease-in-out">
+            <div :class="showMenu ? 'translate-y-16 h-screen' : ''" class="w-full flex flex-col space-y-3 md:px-12 py-3 bg-white md:bg-transparent dark:bg-neutral-800 dark:md:bg-transparent overflow-hidden transform -translate-y-full md:transform-none transition ease-in-out">
                 <div class="mx-auto">
                     <DarkModeToggle></DarkModeToggle>
                 </div>
@@ -62,7 +61,7 @@ const closeModal = () => showModal.value = false;
                             <span>Dashboard</span>
                         </div>
                     </NavLink>
-                    <NavLink :href="route('admin.users.index')" :active="route().current('admin.users.index')">
+                    <NavLink v-if="$page.props.auth.user.access_level === 'admin'" :href="route('admin.users.index')" :active="route().current('admin.users.index')">
                         <div class="flex items-center space-x-2">
                             <FontAwesomeIcon :icon="faUsers" class="w-6 text-center" />
                             <span>Users</span>
@@ -92,13 +91,25 @@ const closeModal = () => showModal.value = false;
                     <span class="px-6 text-sm text-primary font-medium">{{ $page.props.auth.user.name }}</span>
                     <NavLink :href="route('profile.edit')" :active="route().current('profile.edit')">
                         <div class="flex items-center space-x-2">
-                            <FontAwesomeIcon :icon="faUserCog" class="w-6 text-center" />
-                            <span>Profile</span>
+                            <FontAwesomeIcon :icon="faUserPen" class="w-6 text-center" />
+                            <span>Account Information</span>
                         </div>
                     </NavLink>
-                    <button type="button" @click.prevent="confirmLogout" class="text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium hover:bg-primary-100 px-6 py-3 md:rounded transition duration-150 ease-in-out">
+                    <NavLink :href="route('profile.change_password')" :active="route().current('profile.change_password')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faUserLock" class="w-6 text-center" />
+                            <span>Change Password</span>
+                        </div>
+                    </NavLink>
+                    <NavLink :href="route('profile.activity_log')" :active="route().current('profile.activity_log')">
                         <div class="flex items-center space-x-2">
                             <FontAwesomeIcon :icon="faPersonRunning" class="w-6 text-center" />
+                            <span>Activity Log</span>
+                        </div>
+                    </NavLink>
+                    <button type="button" @click.prevent="confirmLogout" class="text-sm text-neutral-800 dark:text-white hover:text-primary dark:hover:text-primary font-medium hover:bg-primary-100 px-6 py-3 md:rounded transition duration-150 ease-in-out">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faDoorOpen" class="w-6 text-center" />
                             <span>Logout</span>
                         </div>
                     </button>
@@ -106,7 +117,7 @@ const closeModal = () => showModal.value = false;
             </div>
         </nav>
 
-        <main class="w-full flex-grow md:p-12 bg-white dark:bg-gray-950 overflow-y-auto md:transition md:ease-in-out">
+        <main class="w-full flex-grow md:p-12 bg-white dark:bg-neutral-800 overflow-y-auto md:transition md:ease-in-out">
             <slot />
         </main>
     </div>

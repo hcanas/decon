@@ -38,7 +38,12 @@ class ProductController extends Controller
             $filters[] = 'status != archived';
 
             if ($request->get('brands')) {
-                $filters[] = 'brand IN ['.$request->brands.']';
+                // enclose each value in quotation marks
+                $brands = array_map(function ($brand) {
+                    return '"'.$brand.'"';
+                }, explode(',', $request->get('brands')));
+
+                $filters[] = 'brand IN ['.implode(',', $brands).']';
             }
 
             if ($request->get('price_min')) {

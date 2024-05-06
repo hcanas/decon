@@ -39,13 +39,13 @@ defineEmits(['close']);
                         leave="duration-200 ease-in"
                         leave-from="opacity-100 scale-100"
                         leave-to="opacity-0 scale-95">
-                        <DialogPanel :class="width === 'full' ? 'max-w-7xl' : 'max-w-lg'" class="w-full transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                        <DialogPanel :class="width === 'full' ? 'max-w-7xl' : 'max-w-lg'" class="w-full transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
                             <DialogTitle>
                                 <div class="flex items-start justify-between space-x-6">
-                                    <h3 class="mb-4 font-medium leading-6 text-gray-900 dark:text-gray-300">
+                                    <h3 class="mb-4 font-medium leading-6">
                                         <slot name="title" />
                                     </h3>
-                                    <button @click="$emit('close')" class="dark:text-gray-300"><FontAwesomeIcon :icon="faXmark" /></button>
+                                    <button @click="$emit('close')" class=""><FontAwesomeIcon :icon="faXmark" /></button>
                                 </div>
                             </DialogTitle>
                             <slot />

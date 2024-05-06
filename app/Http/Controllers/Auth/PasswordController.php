@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -20,9 +22,19 @@ class PasswordController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
+        DB::beginTransaction();
+
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        ActivityLog::create([
+            'user_id' => $request->user()->id,
+            'category' => 'account',
+            'description' => 'Changed password.',
+        ]);
+
+        DB::commit();
 
         return back();
     }

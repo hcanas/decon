@@ -64,11 +64,11 @@ const submit = () => {
             <RadioGroup v-model="form.access_level">
                 <div class="space-y-2">
                     <RadioGroupOption :value="'regular'" as="template" v-slot="{ checked }">
-                        <div :class="checked ? 'bg-primary-100 shadow' : 'bg-gray-100'" class="px-4 py-3 rounded-lg cursor-pointer">
+                        <div :class="checked ? 'bg-primary-100 dark:bg-primary' : 'bg-neutral-100 dark:bg-neutral-900'" class="px-4 py-3 rounded-lg cursor-pointer">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <RadioGroupLabel as="p" class="text-gray-600 font-medium">Regular</RadioGroupLabel>
-                                    <RadioGroupDescription as="p" class="text-sm text-gray-600">
+                                    <RadioGroupLabel as="p" class=" font-medium">Regular</RadioGroupLabel>
+                                    <RadioGroupDescription as="p" class="text-sm">
                                         Summary of regular user roles and responsibilities.
                                     </RadioGroupDescription>
                                 </div>
@@ -78,11 +78,11 @@ const submit = () => {
                     </RadioGroupOption>
                     <RadioGroupOption :value="'admin'" as="template" v-slot="{ checked }">
 
-                        <div :class="checked ? 'bg-primary-100' : 'bg-gray-100'" class="px-4 py-3 rounded-lg cursor-pointer">
+                        <div :class="checked ? 'bg-primary-100 dark:bg-primary' : 'bg-neutral-100 dark:bg-neutral-900'" class="px-4 py-3 rounded-lg cursor-pointer">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <RadioGroupLabel as="p" class="text-gray-600 font-medium">Admin</RadioGroupLabel>
-                                    <RadioGroupDescription as="p" class="text-sm text-gray-600">
+                                    <RadioGroupLabel as="p" class=" font-medium">Admin</RadioGroupLabel>
+                                    <RadioGroupDescription as="p" class="text-sm">
                                         Summary of admin user roles and responsibilities.
                                     </RadioGroupDescription>
                                 </div>
@@ -96,9 +96,9 @@ const submit = () => {
             <InputError class="mt-2" :message="form.errors.access_level" />
         </div>
 
-        <p v-if="form.wasSuccessful" class="text-green-600">Email verification link has been sent.</p>
 
-        <div class="flex justify-end">
+        <div class="flex flex-col md:flex-row items-center md:justify-end md:space-x-3 space-y-3 md:space-y-0">
+            <p v-if="form.wasSuccessful" class="text-green-600">Email verification link has been sent.</p>
             <PrimaryButton type="submit">Register</PrimaryButton>
         </div>
     </form>

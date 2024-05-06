@@ -27,6 +27,8 @@ import QuotationDetails from "@/Pages/PurchaseOrders/QuotationDetails.vue";
 import Filter from "@/Pages/PurchaseOrders/Filter.vue";
 import {useFormatter} from "@/Composables/formatter.js";
 import ItemForm from "@/Pages/Quotations/Forms/ItemForm.vue";
+import TableMenu from "@/Components/Table/TableMenu.vue";
+import TableMenuItem from "@/Components/Table/TableMenuItem.vue";
 
 defineProps({
     filters: Object,
@@ -112,11 +114,11 @@ const recordNotLocked = status => {
 };
 
 const statusColors = {
-    unpaid: 'text-yellow-500',
-    paid: 'text-cyan-500',
-    'for delivery': 'text-indigo-500',
-    delivered: 'text-green-500',
-    cancelled: 'text-red-500',
+    unpaid: 'text-yellow-600 dark:text-yellow-500',
+    paid: 'text-cyan-600 dark:text-cyan-500',
+    'for delivery': 'text-indigo-600 dark:text-indigo-500',
+    delivered: 'text-green-600 dark:text-green-500',
+    cancelled: 'text-red-600 dark:text-red-500',
 };
 </script>
 
@@ -131,17 +133,17 @@ const statusColors = {
                 <template #quotationCustomer="{ rowData }">
                     <div class="flex flex-col space-y-1">
                         <p class="font-medium">{{ rowData.quotation.customer.email }}</p>
-                        <div class="flex items-center space-x-3">
-                            <p class="text-sm text-gray-500 flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faTag" class="text-center text-gray-500" />
+                        <div class="flex flex-col md:flex-row md:items-center md:space-x-3">
+                            <p class="text-sm flex items-center space-x-1">
+                                <FontAwesomeIcon :icon="faTag" class="text-center" />
                                 <span>{{ rowData.quotation.customer.code }}</span>
                             </p>
-                            <p class="text-sm text-gray-500 flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faPhoneFlip" class="text-center text-gray-500" />
+                            <p class="text-sm flex items-center space-x-1">
+                                <FontAwesomeIcon :icon="faPhoneFlip" class="text-center" />
                                 <span class="italic">{{ rowData.quotation.customer.contact_number }}</span>
                             </p>
-                            <p class="text-sm text-gray-500 flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faPhoneVolume" class="text-center text-gray-500" />
+                            <p class="text-sm flex items-center space-x-1">
+                                <FontAwesomeIcon :icon="faPhoneVolume" class="text-center" />
                                 <span class="italic">{{ rowData.quotation.customer.viber_id ?? 'N/A' }}</span>
                             </p>
                         </div>
@@ -149,66 +151,47 @@ const statusColors = {
                 </template>
 
                 <template #quotation="{ rowData }">
-                    <div class="flex flex-col items-center">
-                        <p class="text-sm">{{ `${filter(rowData.quotation.items, x => x.status === 'available').length} items` }}</p>
-                        <TableButton @click="includes(['delivered', 'cancelled'], rowData.status) ? viewQuotationDetails(rowData) : editItems(rowData)" class="text-blue-500">
-                            <div class="flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="includes(['delivered', 'cancelled'], rowData.status) ? faEye : faPencil" />
-                                <span>{{ includes(['delivered', 'cancelled'], rowData.status) ? 'View' : 'Edit' }}</span>
-                            </div>
-                        </TableButton>
-                    </div>
+                    <p class="text-sm">{{ `${filter(rowData.quotation.items, x => x.status === 'available').length} items` }}</p>
                 </template>
 
                 <template #paymentDetails="{ rowData }">
-                    <div class="flex flex-col items-center">
-                        <p class="block text-sm">{{ rowData.payment_details }}</p>
-                        <TableButton v-if="!rowData.delivery_date && recordNotLocked(rowData.status)" @click="setPaymentDetails(rowData)" class="text-blue-500">
-                            <div class="flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="rowData.payment_details ? faPencil : faCreditCard" />
-                                <span>{{ rowData.payment_details ? 'Edit' : 'Pay' }}</span>
-                            </div>
-                        </TableButton>
-                    </div>
+                    <p class="block text-sm">{{ rowData.payment_details }}</p>
                 </template>
 
                 <template #deliveryDate="{ rowData }">
                     <p class="text-sm">{{ formatDate(rowData.delivery_date) }}</p>
-                    <div v-if="rowData.delivery_date && recordNotLocked(rowData.status)" class="flex items-center justify-center space-x-3">
-                        <TableButton @click="setDeliveryDate(rowData)" class="text-blue-500">
-                            <div class="flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faPencil" />
-                                <span>Edit</span>
-                            </div>
-                        </TableButton>
-                        <TableButton @click="confirmDelivery(rowData)" class="text-green-500">
-                            <div class="flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faCheck" />
-                                <span>Delivered</span>
-                            </div>
-                        </TableButton>
-                    </div>
-                    <TableButton v-else-if="rowData.payment_details && recordNotLocked(rowData.status)" @click="setDeliveryDate(rowData)" class="text-blue-500">
-                        <div class="flex items-center space-x-1">
-                            <FontAwesomeIcon :icon="faCalendarDays" />
-                            <span>Schedule</span>
-                        </div>
-                    </TableButton>
                 </template>
 
                 <template #status="{ rowData }">
-                    <div class="flex flex-col items-center">
-                        <TableTag class="mx-auto" :class="statusColors[rowData.status]">{{ rowData.status }}</TableTag>
-                        <TableButton v-if="recordNotLocked(rowData.status)" @click="confirmCancellation(rowData)" class="text-red-500">
-                            <div class="flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faTrashCan" />
-                                <span>Cancel Order</span>
-                            </div>
-                        </TableButton>
-                        <span v-if="!recordNotLocked(rowData.status)" class="text-gray-500 text-sm">
+                    <div class="flex flex-col md:items-center">
+                        <TableTag :class="statusColors[rowData.status]">{{ rowData.status }}</TableTag>
+                        <span v-if="!recordNotLocked(rowData.status)" class=" text-sm">
                             {{ formatDate(rowData.updated_at) }}
                         </span>
                     </div>
+                </template>
+
+                <template #actions="{ rowData }">
+                    <TableMenu>
+                        <TableMenuItem @click="includes(['delivered', 'cancelled'], rowData.status) ? viewQuotationDetails(rowData) : editItems(rowData)">
+                            {{ includes(['delivered', 'cancelled'], rowData.status) ? 'View Items' : 'Edit Items' }}
+                        </TableMenuItem>
+                        <TableMenuItem v-if="!rowData.delivery_date && recordNotLocked(rowData.status)" @click="setPaymentDetails(rowData)">
+                            {{ rowData.payment_details ? 'Edit Payment' : 'Set Payment' }}
+                        </TableMenuItem>
+                        <TableMenuItem v-if="rowData.delivery_date && recordNotLocked(rowData.status)" @click="setDeliveryDate(rowData)">
+                            Edit Delivery Date
+                        </TableMenuItem>
+                        <TableMenuItem v-if="rowData.delivery_date && recordNotLocked(rowData.status)" @click="confirmDelivery(rowData)">
+                            Confirm Delivery
+                        </TableMenuItem>
+                        <TableMenuItem v-else-if="rowData.payment_details && recordNotLocked(rowData.status)" @click="setDeliveryDate(rowData)">
+                            Schedule Delivery
+                        </TableMenuItem>
+                        <TableMenuItem v-if="recordNotLocked(rowData.status)" @click="confirmCancellation(rowData)" class="text-red-600 dark:text-red-500">
+                            Cancel Order
+                        </TableMenuItem>
+                    </TableMenu>
                 </template>
             </CustomTable>
 
@@ -234,7 +217,7 @@ const statusColors = {
             >
                 <div v-if="modalOptions.data" class="flex items-center space-x-1">
                     <p class="font-medium">{{ modalOptions.data.reference_number }}</p>
-                    <p class="text-gray-400">{{ modalOptions.data.quotation.customer.email }}</p>
+                    <p class="">{{ modalOptions.data.quotation.customer.email }}</p>
                 </div>
             </Transition>
         </template>

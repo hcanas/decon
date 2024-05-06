@@ -1,16 +1,13 @@
 <script setup>
-import {router} from "@inertiajs/vue3";
+import {router, usePage} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Head from "@/Components/Head.vue";
 import CustomTable from "@/Components/Table/CustomTable.vue";
-import TableButton from "@/Components/Table/TableButton.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {
-    faEye,
-    faPencil,
     faTag,
-    faTrashCan,
-    faPhoneFlip, faPhoneVolume, faPaperPlane, faCheck, faTruckFast, faEllipsis, faChevronDown,
+    faPhoneFlip,
+    faPhoneVolume
 } from "@fortawesome/free-solid-svg-icons";
 import TableTag from "@/Components/Table/TableTag.vue";
 import Modal from "@/Components/Modal.vue";
@@ -22,9 +19,11 @@ import ItemList from "@/Pages/Quotations/ItemList.vue";
 import Filter from "@/Pages/Quotations/Filter.vue";
 import ItemForm from "@/Pages/Quotations/Forms/ItemForm.vue";
 import {useFormatter} from "@/Composables/formatter.js";
+import RequestApproval from "@/Pages/Quotations/Confirmations/RequestApproval.vue";
 import ConfirmSend from "@/Pages/Quotations/Confirmations/ConfirmSend.vue";
 import ConfirmQuotation from "@/Pages/Quotations/Confirmations/ConfirmQuotation.vue";
-import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
+import TableMenuItem from "@/Components/Table/TableMenuItem.vue";
+import TableMenu from "@/Components/Table/TableMenu.vue";
 
 defineProps({
     filters: Object,
@@ -37,7 +36,8 @@ const columns = [
     { field: 'created_at', title: 'Date', format: 'date', align: 'left' },
     { field: 'customer', title: 'Customer', align: 'left' },
     { field: 'items', title: 'Items' },
-    { field: 'total', title: 'Total', format: 'currency', align: 'right' },
+    { field: 'total', title: 'Amount', format: 'currency', align: 'right' },
+    { field: 'purchase_order.reference_number', title: 'PO #' },
     { field: 'status', title: 'Status' },
 ];
 
@@ -67,6 +67,14 @@ const viewItems = param => {
     modalOptions.value = {
         show: true,
         component: 'item-list',
+        data: param,
+    };
+};
+
+const requestApproval = param => {
+    modalOptions.value = {
+        show: true,
+        component: 'request-approval',
         data: param,
     };
 };
@@ -103,12 +111,20 @@ const isLocked = status => {
     return includes(['confirmed', 'cancelled'], status);
 };
 
+const canEdit = param => {
+    return !isLocked(param.status) && (
+        (param.status === 'pending' && usePage().props.auth.user.access_level !== 'admin')
+        || usePage().props.auth.user.access_level === 'admin'
+    );
+};
+
 const statusColors = {
-    pending: 'text-yellow-500',
-    sent: 'text-cyan-500',
-    confirmed: 'text-green-500',
-    rejected: 'text-pink-500',
-    cancelled: 'text-red-500',
+    pending: 'text-yellow-600 dark:text-yellow-500',
+    'for approval': 'text-sky-600 dark:text-sky-500',
+    sent: 'text-cyan-600 dark:text-cyan-500',
+    confirmed: 'text-green-600 dark:text-green-500',
+    rejected: 'text-pink-600 dark:text-pink-500',
+    cancelled: 'text-red-600 dark:text-red-500',
 };
 </script>
 
@@ -123,17 +139,17 @@ const statusColors = {
                 <template #customer="{ rowData }">
                     <div class="flex flex-col space-y-1">
                         <p class="font-medium">{{ rowData.customer.email }}</p>
-                        <div class="flex items-center space-x-3">
-                            <p class="text-sm text-gray-500 flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faTag" class="text-center text-gray-500" />
+                        <div class="flex flex-col md:flex-row md:items-center md:space-x-3 space-y-1 md:space-y-0">
+                            <p class="text-sm flex items-center space-x-1">
+                                <FontAwesomeIcon :icon="faTag" class="text-center" />
                                 <span>{{ rowData.customer.code }}</span>
                             </p>
-                            <p class="text-sm text-gray-500 flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faPhoneFlip" class="text-center text-gray-500" />
+                            <p class="text-sm flex items-center space-x-1">
+                                <FontAwesomeIcon :icon="faPhoneFlip" class="text-center" />
                                 <span class="italic">{{ rowData.customer.contact_number }}</span>
                             </p>
-                            <p class="text-sm text-gray-500 flex items-center space-x-1">
-                                <FontAwesomeIcon :icon="faPhoneVolume" class="text-center text-gray-500" />
+                            <p class="text-sm flex items-center space-x-1">
+                                <FontAwesomeIcon :icon="faPhoneVolume" class="text-center" />
                                 <span class="italic">{{ rowData.customer.viber_id ?? 'N/A' }}</span>
                             </p>
                         </div>
@@ -141,86 +157,49 @@ const statusColors = {
                 </template>
 
                 <template #items="{ rowData }">
-                    <div class="flex justify-center items-center space-x-3">
-                        <p class="text-sm flex divide-x">
-                            <span class="text-cyan-500 px-2">{{ `${filter(rowData.items, x => x.status === 'available').length} available` }}</span>
-                            <span class="text-gray-400 px-2">{{ `${filter(rowData.items, x => x.status === 'unavailable').length} unavailable` }}</span>
-                        </p>
-                        <Menu as="div" class="relative">
-                            <MenuButton class="text-sm z-0">
-                                <FontAwesomeIcon :icon="faChevronDown" class="w-3 h-3" />
-                            </MenuButton>
-
-                            <Transition
-                                enter-active-class="transition duration-100 ease-out"
-                                enter-from-class="transform scale-95 opacity-0"
-                                enter-to-class="transform scale-100 opacity-100"
-                                leave-active-class="transition duration-75 ease-in"
-                                leave-from-class="transform scale-100 opacity-100"
-                                leave-to-class="transform scale-95 opacity-0"
-                            >
-                                <MenuItems as="div" class="absolute top-6 -left-12 p-4 bg-gray-50 shadow rounded z-10 w-max flex flex-col space-y-3">
-                                    <MenuItem v-if="!isLocked(rowData.status)" as="div">
-                                        <TableButton @click="editItems(rowData)" class="block text-blue-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faPencil" />
-                                                <span>Edit</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                    <MenuItem v-if="isLocked(rowData.status)" as="div">
-                                        <TableButton @click="viewItems(rowData)" class="block text-blue-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faEye" />
-                                                <span>View</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                    <MenuItem v-if="!isLocked(rowData.status)" as="div">
-                                        <TableButton @click="confirmSend(rowData)" class="block text-blue-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faPaperPlane" />
-                                                <span>Send Quotation</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                    <MenuItem v-if="!isLocked(rowData.status) && rowData.status === 'sent'" as="div">
-                                        <TableButton @click="confirmQuotation(rowData)" class="block text-green-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faCheck" />
-                                                <span>Confirm Quotation</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                    <MenuItem v-if="!isLocked(rowData.status)" as="div">
-                                        <TableButton @click="confirmCancellation(rowData)" class="text-red-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faTrashCan" />
-                                                <span>Cancel Quotation</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                    <MenuItem v-if="rowData.purchase_order" as="div">
-                                        <TableButton @click="goToPurchaseOrder(rowData.purchase_order.reference_number)" class="block text-primary-500">
-                                            <div class="flex items-center space-x-1">
-                                                <FontAwesomeIcon :icon="faTruckFast" />
-                                                <span>{{ rowData.purchase_order.reference_number }}</span>
-                                            </div>
-                                        </TableButton>
-                                    </MenuItem>
-                                </MenuItems>
-                            </Transition>
-                        </Menu>
-                    </div>
+                    <p class="text-sm flex w-fit md:mx-auto divide-x">
+                        <span class="text-cyan-500 pr-2 md:pl-2">{{ `${filter(rowData.items, x => x.status === 'available').length} available` }}</span>
+                        <span class="px-2">{{ `${filter(rowData.items, x => x.status === 'unavailable').length} unavailable` }}</span>
+                    </p>
                 </template>
 
                 <template #status="{ rowData }">
-                    <div class="flex flex-col items-center">
-                        <TableTag class="mx-auto" :class="statusColors[rowData.status]">{{ rowData.status }}</TableTag>
-                        <span class="text-sm text-gray-400">
+                    <div class="flex flex-col md:items-center">
+                        <TableTag :class="statusColors[rowData.status]">{{ rowData.status }}</TableTag>
+                        <span class="text-sm">
                             {{ formatDate(rowData.updated_at) }}
                         </span>
                     </div>
+                </template>
+
+                <template #actions="{ rowData }">
+                    <TableMenu>
+                        <TableMenuItem v-if="canEdit(rowData)" @click="editItems(rowData)">
+                            Edit Items
+                        </TableMenuItem>
+                        <TableMenuItem v-else @click="viewItems(rowData)">
+                            View Items
+                        </TableMenuItem>
+
+                        <TableMenuItem v-if="rowData.status === 'pending' && $page.props.auth.user.access_level !== 'admin'" @click="requestApproval(rowData)">
+                            Request Approval
+                        </TableMenuItem>
+                        <TableMenuItem v-else-if="includes(['pending', 'for approval'], rowData.status) && $page.props.auth.user.access_level === 'admin'" @click="confirmSend(rowData)">
+                            Approve and Send Quotation
+                        </TableMenuItem>
+
+                        <TableMenuItem v-if="!isLocked(rowData.status) && rowData.status === 'sent'" @click="confirmSend(rowData)">
+                            Resend Quotation
+                        </TableMenuItem>
+
+                        <TableMenuItem v-if="!isLocked(rowData.status) && rowData.status === 'sent'" @click="confirmQuotation(rowData)">
+                            Confirm Quotation
+                        </TableMenuItem>
+
+                        <TableMenuItem v-if="!isLocked(rowData.status)" @click="confirmCancellation(rowData)" class="text-red-600 dark:text-red-500">
+                            Cancel Quotation
+                        </TableMenuItem>
+                    </TableMenu>
                 </template>
             </CustomTable>
 
@@ -246,7 +225,7 @@ const statusColors = {
             >
                 <div v-if="modalOptions.data" class="flex flex-col">
                     <p class="font-medium">{{ modalOptions.data.customer.email }}</p>
-                    <p class="text-gray-400">{{ formatDate(modalOptions.data.created_at) }}</p>
+                    <p class="">{{ formatDate(modalOptions.data.created_at) }}</p>
                 </div>
             </Transition>
         </template>
@@ -257,6 +236,7 @@ const statusColors = {
         >
             <ItemList v-if="modalOptions.component === 'item-list'" :data="modalOptions.data" />
             <ItemForm v-else-if="modalOptions.component === 'item-form'" :data="modalOptions.data" @saved="closeModal()" />
+            <RequestApproval v-else-if="modalOptions.component === 'request-approval'" :data="modalOptions.data" @success="closeModal()" />
             <ConfirmSend v-else-if="modalOptions.component === 'confirm-send'" :data="modalOptions.data" @confirmed="closeModal()" />
             <ConfirmQuotation v-else-if="modalOptions.component === 'confirm-quotation'" :data="modalOptions.data" @confirmed="closeModal()" />
             <ConfirmCancellation v-else-if="modalOptions.component === 'confirm-cancellation'" :data="modalOptions.data" @confirmed="closeModal()" />

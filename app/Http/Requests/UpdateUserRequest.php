@@ -12,7 +12,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->id !== $this->route('user') AND $this->user()->access_level === 'admin';
+        return $this->user()->id !== $this->route('user')->id AND $this->user()->access_level === 'admin';
     }
 
     /**

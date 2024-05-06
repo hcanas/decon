@@ -42,12 +42,12 @@ onMounted(() => {
 <template>
     <Listbox v-model="activeOption">
         <div class="relative">
-            <ListboxButton class="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded text-gray-600 shadow-sm hover:bg-gray-200 focus:bg-gray-200 outline-none transition ease-in-out">
+            <ListboxButton class="w-full md:w-fit flex items-center justify-between space-x-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-950 hover:bg-neutral-100 dark:hover:bg-neutral-950 rounded outline-none transition ease-in-out">
                 <span class="text-sm">{{ activeOption.label }}</span>
                 <FontAwesomeIcon :icon="faChevronDown" class="text-sm" />
             </ListboxButton>
 
-            <transition
+            <Transition
                 enter-active-class="transition duration-200 ease-out"
                 enter-from-class="translate-y-1 opacity-0"
                 enter-to-class="translate-y-0 opacity-100"
@@ -56,19 +56,19 @@ onMounted(() => {
                 leave-to-class="translate-y-1 opacity-0"
             >
                 <ListboxOptions
-                    class="absolute mt-1 max-h-[24rem] overflow-y-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                    class="w-full md:w-fit max-h-[24rem] absolute mt-1 z-10 overflow-y-auto rounded-md bg-white dark:bg-neutral-900 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
                 >
                     <ListboxOption
                         v-for="option in options"
                         :key="option.value"
                         :value="option"
-                        class="w-max px-4 py-1 cursor-pointer hover:text-primary transition ease-in-out"
+                        class="w-max px-4 py-1 cursor-pointer text-neutral-800 dark:text-white hover:text-primary dark:hover:text-primary transition ease-in-out"
                         :class="{ 'text-primary': activeOption.value === option.value }"
                     >
                         {{ option.label }}
                     </ListboxOption>
                 </ListboxOptions>
-            </transition>
+            </Transition>
         </div>
     </Listbox>
 </template>

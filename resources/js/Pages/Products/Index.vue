@@ -42,15 +42,15 @@ const closeModal = () => {
 
             <Filter />
 
-            <div class="grid grid-cols-2 md:grid-cols-6 gap-6">
-                <a href="#" @click.prevent="showDetails(product)" v-for="product in products.data" class="shadow-lg rounded dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900 transition ease-in-out">
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-6 mt-6">
+                <a href="#" @click.prevent="showDetails(product)" v-for="product in products.data" class="shadow-lg rounded dark:bg-neutral-950 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition ease-in-out">
                     <div class="w-full p-1 rounded-t">
                         <img :src="`/storage/images/${product.image ?? 'placeholder.png'}`" class="mx-auto rounded-t" />
                     </div>
                     <div class="flex flex-col items-center px-4 py-2">
-                        <p class="w-full text-center dark:text-gray-300 truncate" :title="product.name">{{ product.name }}</p>
-                        <p class="text-sm text-gray-500">{{ product.brand }}</p>
-                        <p class="dark:text-gray-300">{{ formatCurrency(product.price) }}</p>
+                        <p class="w-full text-center truncate" :title="product.name">{{ product.name }}</p>
+                        <p class="text-sm">{{ product.brand }}</p>
+                        <p class="">{{ formatCurrency(product.price) }}</p>
                     </div>
                 </a>
             </div>

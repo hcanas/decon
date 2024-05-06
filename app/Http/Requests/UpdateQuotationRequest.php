@@ -23,7 +23,7 @@ class UpdateQuotationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => Rule::in(['sent', 'confirmed', 'cancelled']),
+            'status' => Rule::in(['for approval', 'sent', 'confirmed', 'cancelled']),
         ];
     }
 }
