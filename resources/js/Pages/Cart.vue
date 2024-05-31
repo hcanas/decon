@@ -31,9 +31,9 @@ const cart = useCart();
 
 const columns = [
     { field: 'product', title: 'Product', align: 'left' },
-    { field: 'price', title: 'Price', align: 'right', format: 'currency' },
+    // { field: 'price', title: 'Price', align: 'right', format: 'currency' },
     { field: 'qty', title: 'Qty', align: 'right' },
-    { field: 'total', title: 'Total', align: 'right', format: 'currency' },
+    // { field: 'total', title: 'Total', align: 'right', format: 'currency' },
 ];
 
 const total = computed(() => reduce(items.value, (sum, o) => sum + (o.qty * o.price), 0));
@@ -129,7 +129,7 @@ onMounted(() => {
                     </template>
                 </CustomTable>
 
-                <p class="font-bold text-right">{{ formatCurrency(total) }}</p>
+<!--                <p class="font-bold text-right">{{ formatCurrency(total) }}</p>-->
 
                 <form>
                     <div class="grid md:grid-cols-2 md:divide-x space-y-12 md:space-y-0">

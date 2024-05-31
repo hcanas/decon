@@ -34,7 +34,7 @@ onMounted(() => {
                 <p class="text-xl font-medium text-center">{{ product.name }}</p>
                 <p class="text-sm">Brand: {{ product.brand ?? 'No Brand' }}</p>
                 <p class=" text-wrap">{{ product.description }}</p>
-                <p>{{ formatCurrency(product.price) }} / {{ product.measurement_unit }}</p>
+<!--                <p>{{ formatCurrency(product.price) }} / {{ product.measurement_unit }}</p>-->
             </div>
             <SecondaryButton v-if="cart.exists(product.id)" @click="cart.remove(product.id)">Remove From Cart</SecondaryButton>
             <PrimaryButton v-else @click="cart.add(product.id)">Add To Cart</PrimaryButton>

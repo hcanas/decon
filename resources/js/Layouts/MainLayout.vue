@@ -13,10 +13,11 @@ import {
     faHome,
     faChartSimple,
     faArrowRight,
-    faShoppingCart
+    faShoppingCart, faCircleQuestion, faPhone, faEnvelope
 } from "@fortawesome/free-solid-svg-icons";
 import HorizontalNavLink from "@/Components/Nav/HorizontalNavLink.vue";
 import {useCart} from "@/Composables/cart.js";
+import {faFacebook, faInstagram, faTwitter} from "@fortawesome/free-brands-svg-icons";
 
 const cart = useCart();
 
@@ -48,10 +49,14 @@ onMounted(() => {
         <nav class="h-16 md:h-auto relative z-50 md:z-0 dark:bg-neutral-950 md:transition md:ease-in-out ">
             <div class="absolute md:relative w-screen md:max-w-7xl h-full md:h-auto bg-white dark:bg-neutral-950 md:mx-auto flex items-center md:space-x-24 px-3 md:px-0 md:py-12 z-10 md:z-0 transition ease-in-out ">
                 <div class="flex-grow">
-                    <Link :href="route('home')">
+                    <Link :href="route('home')" class="flex items-center space-x-3">
                         <ApplicationLogo
                             class="block h-9 w-auto fill-current"
                         />
+                        <p class="flex flex-col text-lg font-bold leading-none">
+                            <span class="text-gray-500">EC PRIME</span>
+                            <span>CORPORATION</span>
+                        </p>
                     </Link>
                 </div>
 
@@ -64,9 +69,17 @@ onMounted(() => {
                         Products
                     </HorizontalNavLink>
 
+                    <HorizontalNavLink :href="route('about_us')" :active="route().current('about_us')" class="hidden md:inline">
+                        About Us
+                    </HorizontalNavLink>
+
+                    <HorizontalNavLink :href="route('contact_us')" :active="route().current('contact_us')" class="hidden md:inline">
+                        Contact Us
+                    </HorizontalNavLink>
+
                     <HorizontalNavLink :href="route('cart')" class="group">
                         <div class="relative">
-                            <span class="absolute -top-2 -right-3 text-xs px-1.5 py-0.5 bg-red-500 rounded-full">{{ cartItemCount }}</span>
+                            <span class="absolute -top-2 -right-3 text-xs px-1.5 py-0.5 bg-red-500 rounded-full text-white">{{ cartItemCount }}</span>
                             <FontAwesomeIcon :icon="faShoppingCart" class="relative group-hover:text-primary transition ease-in-out" />
                         </div>
                     </HorizontalNavLink>
@@ -75,7 +88,7 @@ onMounted(() => {
                 <div class="flex items-center space-x-6">
                     <DarkModeToggle class="hidden md:inline" />
 
-                    <Link :href="isLoggedIn ? route('admin.dashboard', { year: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', year: 'numeric' }) }) : route('login')" class="hidden md:inline bg-neutral-100 dark:bg-neutral-800 hover: hover:bg-primary dark:hover: dark:hover:bg-primary px-3 py-1 rounded shadow-sm transition ease-in-out">
+                    <Link :href="isLoggedIn ? route('admin.dashboard', { year: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', year: 'numeric' }) }) : route('login')" class="hidden md:inline bg-neutral-100 dark:bg-neutral-800 hover:text-white hover:bg-primary dark:hover: dark:hover:bg-primary px-3 py-1 rounded shadow-sm transition ease-in-out">
                         <div class="flex items-center">
                             <span class="text-sm">{{ isLoggedIn ? 'Dashboard' : 'Login' }}</span>
                             <FontAwesomeIcon :icon="faArrowRight" class="w-6 text-center text-xs" />
@@ -101,10 +114,24 @@ onMounted(() => {
                         </div>
                     </NavLink>
 
-                    <NavLink v-if="!$page.props.auth?.user" :href="route('products.index')" :active="route().current('products.index')">
+                    <NavLink :href="route('products.index')" :active="route().current('products.index')">
                         <div class="flex items-center space-x-2">
                             <FontAwesomeIcon :icon="faSuitcaseMedical" class="w-6 text-center" />
                             <span>Products</span>
+                        </div>
+                    </NavLink>
+
+                    <NavLink :href="route('about_us')" :active="route().current('about_us')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faCircleQuestion" class="w-6 text-center" />
+                            <span>About Us</span>
+                        </div>
+                    </NavLink>
+
+                    <NavLink :href="route('contact_us')" :active="route().current('contact_us')">
+                        <div class="flex items-center space-x-2">
+                            <FontAwesomeIcon :icon="faCircleQuestion" class="w-6 text-center" />
+                            <span>Contact Us</span>
                         </div>
                     </NavLink>
 
@@ -128,5 +155,67 @@ onMounted(() => {
         <main class="w-full flex-grow bg-white dark:bg-neutral-950 transition ease-in-out ">
             <slot />
         </main>
+
+        <div class="flex flex-col space-y-6 bg-neutral-900 px-6 md:px-0 py-12">
+            <div class="w-full md:max-w-7xl mx-auto flex items-center space-x-3">
+                <ApplicationLogo class="h-9 w-fit" />
+                <p class="flex flex-col text-white leading-tight">
+                    <span>EC Prime</span>
+                    <span>Corporation</span>
+                </p>
+            </div>
+
+            <div class="w-full md:max-w-7xl mx-auto flex-shrink-0 grid gap-6 md:grid-cols-3">
+                <div class="flex flex-col space-y-2">
+                    <h6 class="text-white font-medium">Contact</h6>
+                    <p class="flex items-center space-x-2 text-sm text-white">
+                        <FontAwesomeIcon :icon="faPhone" />
+                        <span>+639 3872 9999</span>
+                    </p>
+                    <p class="flex items-center space-x-2 text-sm text-white">
+                        <FontAwesomeIcon :icon="faEnvelope" />
+                        <span>ecprimecorp@gmail.com</span>
+                    </p>
+
+                    <h6 class="text-white font-medium">Follow us on</h6>
+
+                    <div class="flex items-center space-x-3">
+                        <a href="#" class="text-white hover:underline" title="Facebook">
+                            <FontAwesomeIcon :icon="faFacebook" />
+                        </a>
+                        <a href="#" class="text-white hover:underline" title="Facebook">
+                            <FontAwesomeIcon :icon="faInstagram" />
+                        </a>
+                        <a href="#" class="text-white hover:underline" title="Facebook">
+                            <FontAwesomeIcon :icon="faTwitter" />
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex flex-col space-y-2">
+                    <h6 class="text-white font-medium">Departments</h6>
+                    <p class="text-sm text-white">Sales Team</p>
+                    <p class="text-sm text-white">Procurement Team</p>
+                    <p class="text-sm text-white">Legal Team</p>
+                    <p class="text-sm text-white">Logistics Team</p>
+                </div>
+
+                <div class="flex flex-col space-y-2">
+                    <h6 class="text-white font-medium">Operating Hours</h6>
+                    <p class="text-sm text-white grid grid-cols-2">
+                        <span>Monday - Friday</span>
+                        <span>9am - 5pm</span>
+                    </p>
+                    <p class="text-sm text-white grid grid-cols-2">
+                        <span>Saturday</span>
+                        <span>10am - 5pm</span>
+                    </p>
+                    <p class="text-sm text-white grid grid-cols-2">
+                        <span>Sunday</span>
+                        <span>Closed</span>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
