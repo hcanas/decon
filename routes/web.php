@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\Admin\BrandSearchController;
 use App\Http\Controllers\Admin\Dashboard\CustomerReportController;
 use App\Http\Controllers\Admin\Dashboard\ProductReportController;
@@ -19,7 +20,10 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\ContactUsController;
+use App\Http\Controllers\Home\ProductBestSellerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -36,10 +40,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/{slug?}', HomeController::class)->where('slug', 'home')->name('home');
+Route::get('best_sellers', ProductBestSellerController::class)->name('best_sellers');
+Route::get('about_us', AboutUsController::class)->name('about_us');
+Route::get('contact_us', ContactUsController::class)->name('contact_us');
+Route::post('send_inquiry', InquiryController::class)->name('send_inquiry');
+
 Route::resource('products', \App\Http\Controllers\ProductController::class);
 Route::get('cart', CartController::class)->name('cart');
 Route::resource('cart_items', CartItemController::class);
 Route::post('quotations', \App\Http\Controllers\QuotationController::class)->name('quotations.store');
+
 Route::get('brands', BrandController::class)->name('brands');
 Route::get('categories', ProductCategoryController::class)->name('categories');
 

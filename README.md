@@ -61,7 +61,6 @@
    $ ./vendor/bin/sail artisan scout:import "App\Models\MeasurementUnit"
    $ ./vendor/bin/sail artisan scout:import "App\Models\Product"
    $ ./vendor/bin/sail artisan scout:import "App\Models\Quotation"
-   $ ./vendor/bin/sail artisan scout:import "App\Models\QuotationItem"
    $ ./vendor/bin/sail artisan scout:import "App\Models\PurchaseOrder"
    ```
 8. Access your app

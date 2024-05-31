@@ -50,7 +50,7 @@ const closeModal = () => {
                     <div class="flex flex-col items-center px-4 py-2">
                         <p class="w-full text-center truncate" :title="product.name">{{ product.name }}</p>
                         <p class="text-sm">{{ product.brand }}</p>
-                        <p class="">{{ formatCurrency(product.price) }}</p>
+<!--                        <p class="">{{ formatCurrency(product.price) }}</p>-->
                     </div>
                 </a>
             </div>
